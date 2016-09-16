@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
-import hoc from './hoc'
-
 class Home extends Component {
 
   state = {
@@ -45,10 +43,14 @@ class Home extends Component {
     }
 
     const config = {
+      chart: {
+        type: 'column'
+      },
       xAxis: {
         categories: categories
       },
       series: [{
+        name: 'Events',
         data: data
       }],
       title: {
@@ -64,4 +66,4 @@ class Home extends Component {
   }
 }
 
-export default hoc(Home)
+export default Home
