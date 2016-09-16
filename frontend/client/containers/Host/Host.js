@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
-class Services extends Component {
+class Host extends Component {
 
   state = {
     events: Immutable.fromJS({})
@@ -10,12 +10,16 @@ class Services extends Component {
 
   componentWillMount() {
     const { events } = this.props
+    const currentHost = this.props.params.host
     let sortedEvents = Immutable.fromJS({})
     events.map(event => {
-      const service = event.get('service')
-      const eventsOfService = sortedEvents.get(service) ? sortedEvents.get(service) : []
-      eventsOfService.push(event)
-      sortedEvents = sortedEvents.set(service, eventsOfService)
+      const host = event.get('remote_host')
+      if (host == currentHost) {
+        const service = event.get('service')
+        const eventsOfService = sortedEvents.get(service) ? sortedEvents.get(service) : []
+        eventsOfService.push(event)
+        sortedEvents = sortedEvents.set(service, eventsOfService)
+      }
     })
     this.setState({
       events: sortedEvents
@@ -38,7 +42,7 @@ class Services extends Component {
         type: 'pie'
       },
       title: {
-        text: 'Top Attacked Services'
+        text: 'Top Attack Hosts'
       },
       tooltip: {
         pointFormat: 'Attacks: <b>{point.y}</b>'
@@ -50,17 +54,17 @@ class Services extends Component {
         }
       },
       series: [{
-        name: 'Top Attack Services',
+        name: 'Top Attack Hosts',
         data: data
       }],
     }
     return (
       <div>
-        <h3 className="title">Services</h3>
+        <h3 className="title">Host</h3>
         <ReactHighcharts config={config} />
       </div>
     )
   }
 }
 
-export default Services
+export default Host

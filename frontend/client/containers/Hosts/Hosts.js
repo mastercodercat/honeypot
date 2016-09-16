@@ -43,6 +43,12 @@ class Hosts extends Component {
       tooltip: {
         pointFormat: 'Attacks: <b>{point.y}</b>'
       },
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+        }
+      },
       series: [{
         name: 'Top Attack Hosts',
         data: data

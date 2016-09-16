@@ -3,6 +3,7 @@ import { browserHistory, Router, Route, IndexRedirect, Redirect } from 'react-ro
 import LayoutContainer from './containers/LayoutContainer/LayoutContainer'
 import Home from './containers/Home/Home'
 import Hosts from './containers/Hosts/Hosts'
+import Host from './containers/Host/Host'
 import Services from './containers/Services/Services'
 
 const requireAuth = (nextState, replace) => {
@@ -26,6 +27,7 @@ export const routes = () => {
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="home" component={Home} />
         <Route path="hosts" component={Hosts} />
+        <Route path="hosts/:host" component={Host} />
         <Route path="services" component={Services} />
       </Route>
 
