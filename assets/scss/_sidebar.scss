@@ -1,0 +1,22 @@
+.sidebar {
+  background-color: $sidebar-bg-color;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: $sidebar-width;
+  bottom: 0;
+  color: #fff;
+  padding-top: $padding-top;
+
+  .navlink {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 32px;
+    color: #fff;
+    text-align: center;
+    &:hover {
+      background-color: lighten($sidebar-bg-color, 10%);
+    }
+  }
+}

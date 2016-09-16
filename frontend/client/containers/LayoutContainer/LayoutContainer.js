@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import Sidebar from 'components/Sidebar/Sidebar'
+
 import hoc from './hoc'
 
 export class LayoutContainer extends Component {
@@ -7,7 +9,10 @@ export class LayoutContainer extends Component {
     const { children } = this.props
     return (
       <div>
-        {children}
+        <Sidebar />
+        <div className="content">
+          {children}
+        </div>
       </div>
     )
   }

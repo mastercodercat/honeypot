@@ -1,6 +1,0 @@
-npm install
-pip install -r requirements.txt
-export DJANGO_SECRET_KEY='isduhf87a63giqu3g4hiaeur'
-./node_modules/.bin/webpack --config webpack.config.js
-python manage.py migrate
-python manage.py runserver
