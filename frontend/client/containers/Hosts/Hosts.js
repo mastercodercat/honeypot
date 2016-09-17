@@ -26,7 +26,9 @@ class Hosts extends Component {
       return true
     })
     if (nodename) {
-      this.props.push(`/hosts/${nodename}`)
+      setTimeout(() => {
+        this.props.push(`/hosts/${nodename}`)
+      }, 500)
     }
   }
 

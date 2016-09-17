@@ -26,7 +26,9 @@ class Services extends Component {
       return true
     })
     if (service) {
-      this.props.push(`/services/${service}`)
+      setTimeout(() => {
+        this.props.push(`/services/${service}`)
+      }, 500)
     }
   }
 
