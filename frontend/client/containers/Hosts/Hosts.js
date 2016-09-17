@@ -2,10 +2,32 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
+import hoc from './hoc'
+
 class Hosts extends Component {
 
   state = {
     events: Immutable.fromJS({})
+  }
+
+  onClickPie = (e) => {
+    const elm = e.target
+    const parent = e.target.parentElement
+    const index = Array.prototype.indexOf.call(parent.childNodes, elm)
+    let i = 0
+    let nodename = ''
+    const { events } = this.state
+    events.every((eventsOfHost, key) => {
+      if (i == index) {
+        nodename = key
+        return false
+      }
+      i++
+      return true
+    })
+    if (nodename) {
+      this.props.push(`/hosts/${nodename}`)
+    }
   }
 
   componentWillMount() {
@@ -35,7 +57,7 @@ class Hosts extends Component {
 
     const config = {
       chart: {
-        type: 'pie'
+        type: 'pie',
       },
       title: {
         text: 'Top Attack Hosts'
@@ -47,11 +69,14 @@ class Hosts extends Component {
         pie: {
           allowPointSelect: true,
           cursor: 'pointer',
-        }
+        },
       },
       series: [{
         name: 'Top Attack Hosts',
-        data: data
+        data: data,
+        events: {
+          click: this.onClickPie
+        }
       }],
     }
     return (
@@ -63,4 +88,4 @@ class Hosts extends Component {
   }
 }
 
-export default Hosts
+export default hoc(Hosts)
