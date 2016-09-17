@@ -5,6 +5,7 @@ import Home from './containers/Home/Home'
 import Hosts from './containers/Hosts/Hosts'
 import Host from './containers/Host/Host'
 import Services from './containers/Services/Services'
+import Service from './containers/Service/Service'
 
 const requireAuth = (nextState, replace) => {
   // if (!boutiqueAirLoggedIn) {
@@ -29,6 +30,7 @@ export const routes = () => {
         <Route path="hosts" component={Hosts} />
         <Route path="hosts/:host" component={Host} />
         <Route path="services" component={Services} />
+        <Route path="services/:service" component={Service} />
       </Route>
 
     </Route>

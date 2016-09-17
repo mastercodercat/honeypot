@@ -2,10 +2,32 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
+import hoc from './hoc'
+
 class Services extends Component {
 
   state = {
     events: Immutable.fromJS({})
+  }
+
+  onClickPie = (e) => {
+    const elm = e.target
+    const parent = e.target.parentElement
+    const index = Array.prototype.indexOf.call(parent.childNodes, elm)
+    let i = 0
+    let service = ''
+    const { events } = this.state
+    events.every((eventsOfHost, key) => {
+      if (i == index) {
+        service = key
+        return false
+      }
+      i++
+      return true
+    })
+    if (service) {
+      this.props.push(`/services/${service}`)
+    }
   }
 
   componentWillMount() {
@@ -51,7 +73,10 @@ class Services extends Component {
       },
       series: [{
         name: 'Top Attack Services',
-        data: data
+        data: data,
+        events: {
+          click: this.onClickPie
+        }
       }],
     }
     return (
@@ -63,4 +88,4 @@ class Services extends Component {
   }
 }
 
-export default Services
+export default hoc(Services)
