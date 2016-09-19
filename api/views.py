@@ -1,4 +1,6 @@
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -40,3 +42,23 @@ class EventsList(APIView):
     events = Event.objects.all()
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def login(request):
+  result = {
+    'status': False,
+    'type': 0,
+  }
+  username = request.data.get('username')
+  password = request.data.get('password')
+  user = authenticate(username=username, password=password)
+  print username, password
+  print user
+  if user is not None:
+    auth_login(request, user)
+    result['status'] = True
+    result['username'] = user.username
+    result['email'] = user.email
+    if user.is_superuser:
+      result['type'] = 1
+  return Response(result)
