@@ -1,19 +1,24 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { hashHistory } from 'react-router'
+import { browserHistory, Router } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
 
 import createStore from 'redux/create'
 import ApiClient from 'utils/apiclient'
-import Routes from './routes'
+import routes from './routes'
 
 const client = new ApiClient()
-const store = createStore(hashHistory, client)
+const store = createStore(browserHistory, client)
+const history = syncHistoryWithStore(browserHistory, store)
 
+const appRoutes = routes()
 const mountNode = document.querySelector('#app')
 
 ReactDOM.render(
   <Provider store={store} key="provider">
-    <Routes store={store} />
+    <Router history={history}>
+      {appRoutes}
+    </Router>
   </Provider>,
 mountNode)

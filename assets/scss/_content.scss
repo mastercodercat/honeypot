@@ -13,3 +13,17 @@
   max-width: 500px;
   margin: 100px auto 0;
 }
+
+.nodes {
+  max-width: 600px;
+  .nodes-table {
+    width: 100%;
+  }
+  td:not(.button) {
+    width: 50%;
+  }
+  td.button {
+    width: 50px;
+    padding-left: 15px;
+  }
+}

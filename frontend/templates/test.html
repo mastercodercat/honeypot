@@ -39,6 +39,7 @@
 </head>
 <body>
   <div class='form'>
+    {% csrf_token %}
     <label>nodename:</label>
     <input type="text" id="nodename" />
     <label>useragent:</label>
@@ -81,6 +82,7 @@
     fields.forEach(function(field) {
       data[field] = $('#' + field).val();
     });
+    data['csrfmiddlewaretoken'] = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     $.ajax({
       url: '/api/logger',
       data: data,

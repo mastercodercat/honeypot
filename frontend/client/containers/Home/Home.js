@@ -32,7 +32,7 @@ class Home extends Component {
     const categories = []
     const data = []
     const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 8);
+    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1);
     for(let i = 0; i < 7; i++) {
       const date = this.formatDate(currentDate)
       const eventsInDay = events.get(date)

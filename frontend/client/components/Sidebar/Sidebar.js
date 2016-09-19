@@ -11,7 +11,7 @@ const Sidebar = () => {
         <i className="fa fa-fw fa-home" />
       </Link>
       <Link className="navlink" to="/hosts">
-        <i className="fa fa-fw fa-server" />
+        <i className="fa fa-fw fa-share-alt" />
       </Link>
       <Link className="navlink" to="/services">
         <i className="fa fa-fw fa-gears" />
@@ -22,8 +22,8 @@ const Sidebar = () => {
       <Link className="navlink" to="/">
         <i className="fa fa-fw fa-database" />
       </Link>
-      <Link className="navlink" to="/">
-        <i className="fa fa-fw fa-users" />
+      <Link className="navlink" to="/nodes">
+        <i className="fa fa-fw fa-server" />
       </Link>
     </div>
   )

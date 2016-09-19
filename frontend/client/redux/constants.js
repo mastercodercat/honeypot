@@ -1,15 +1,29 @@
 export const INIT = '@@INIT'
 export const REDUX_INIT = '@@redux/INIT'
 
-/* Data module */
+/* Events module */
 
 export const DATA_LOAD = 'honeydb/DATA/LOAD'
 export const DATA_LOAD_SUCCESS = 'honeydb/DATA/LOAD_SUCCESS'
 export const DATA_LOAD_FAIL = 'honeydb/DATA/LOAD_FAIL'
 
 
-/* User module */
+/* Users module */
 
-export const USER_LOGIN = 'honeydb/USER/LOGIN'
-export const USER_LOGIN_SUCCESS = 'honeydb/USER/LOGIN_SUCCESS'
-export const USER_LOGIN_FAIL = 'honeydb/USER/LOGIN_FAIL'
+export const USERS_LOGIN = 'honeydb/USERS/LOGIN'
+export const USERS_LOGIN_SUCCESS = 'honeydb/USERS/LOGIN_SUCCESS'
+export const USERS_LOGIN_FAIL = 'honeydb/USERS/LOGIN_FAIL'
+
+export const USERS_GET = 'honeydb/USERS/GET'
+export const USERS_GET_SUCCESS = 'honeydb/USERS/GET_SUCCESS'
+export const USERS_GET_FAIL = 'honeydb/USERS/GET_FAIL'
+
+/* Nodes module */
+
+export const NODES_GET = 'honeydb/NODES/GET'
+export const NODES_GET_SUCCESS = 'honeydb/NODES/GET_SUCCESS'
+export const NODES_GET_FAIL = 'honeydb/NODES/GET_FAIL'
+
+export const NODES_UPDATE = 'honeydb/NODES/UPDATE'
+export const NODES_UPDATE_SUCCESS = 'honeydb/NODES/UPDATE_SUCCESS'
+export const NODES_UPDATE_FAIL = 'honeydb/NODES/UPDATE_FAIL'
