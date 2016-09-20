@@ -22,3 +22,8 @@ class Event(models.Model):
 class Node(models.Model):
   nodename = models.CharField(max_length=50)
   owner = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
+
+class UserConfig(models.Model):
+  user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
+  email = models.CharField(max_length=50, blank=True)
+  threshold = models.IntegerField()

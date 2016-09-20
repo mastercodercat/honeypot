@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from api.serializers import EventSerializer, NodeSerializer, UserSerializer
-from api.models import Event, Node
+from api.serializers import EventSerializer, NodeSerializer, UserSerializer, UserConfigSerializer
+from api.models import Event, Node, UserConfig
 
 class EventLogger(APIView):
 
@@ -98,3 +98,32 @@ class UsersList(APIView):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
+
+class UserConfigAPI(APIView):
+  authentication_classes = (SessionAuthentication,)
+  permission_classes = (IsAuthenticated,)
+
+  def get(self, request, format=None):
+    configs = UserConfig.objects.filter(user=request.user)
+    if configs.count() > 0:
+      config = configs[0]
+      serializer = UserConfigSerializer(config)
+      return Response(serializer.data)
+    return Response({
+      'result': False
+    })
+
+  def post(self, request, format=None):
+    configs = UserConfig.objects.filter(user=request.user)
+    if configs.count() > 0:
+      config = configs[0]
+      config.email = request.data.get('email')
+      config.threshold = request.data.get('threshold')
+    else:
+      config = UserConfig(user=request.user, email=request.data.get('email'), threshold=request.data.get('threshold'))
+    response = {
+      'result': False
+    }
+    if config.save():
+      response['result'] = True
+    return Response(response)

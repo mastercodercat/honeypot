@@ -18,6 +18,14 @@ export const USERS_GET = 'honeydb/USERS/GET'
 export const USERS_GET_SUCCESS = 'honeydb/USERS/GET_SUCCESS'
 export const USERS_GET_FAIL = 'honeydb/USERS/GET_FAIL'
 
+export const USERS_CONFIG_GET = 'honeydb/USERS/CONFIG_GET'
+export const USERS_CONFIG_GET_SUCCESS = 'honeydb/USERS/CONFIG_GET_SUCCESS'
+export const USERS_CONFIG_GET_FAIL = 'honeydb/USERS/CONFIG_GET_FAIL'
+
+export const USERS_CONFIG_UPDATE = 'honeydb/USERS/CONFIG_UPDATE'
+export const USERS_CONFIG_UPDATE_SUCCESS = 'honeydb/USERS/CONFIG_UPDATE_SUCCESS'
+export const USERS_CONFIG_UPDATE_FAIL = 'honeydb/USERS/CONFIG_UPDATE_FAIL'
+
 /* Nodes module */
 
 export const NODES_GET = 'honeydb/NODES/GET'

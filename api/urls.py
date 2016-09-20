@@ -7,5 +7,6 @@ urlpatterns = [
   url(r'^events', views.EventsList.as_view()),
   url(r'^nodes', views.NodesList.as_view()),
   url(r'^users', views.UsersList.as_view()),
+  url(r'^userconfig', views.UserConfigAPI.as_view()),
   url(r'^login', views.login)
 ]
