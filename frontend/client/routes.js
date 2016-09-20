@@ -11,17 +11,15 @@ import Service from './containers/Service/Service'
 import Nodes from './containers/Nodes/Nodes'
 
 const requireAuth = (nextState, replace) => {
-  // const userState = this.props.users
-  // if (!userState.get('username')) {
-  //   replace({ pathname: '/login' })
-  // }
+  if (!window.honeydbLoggedIn) {
+    replace({ pathname: '/login' })
+  }
 }
 
 const requireAdmin = (nextState, replace) => {
-  // const userState = this.props.users
-  // if (!userState.get('username') || !userState.get('admin')) {
-  //   replace({ pathname: '/login' })
-  // }
+  if (!window.honeydbAdmin) {
+    replace({ pathname: '/' })
+  }
 }
 
 const routes = () => {
@@ -36,7 +34,7 @@ const routes = () => {
         <Route path="hosts/:host" component={Host} />
         <Route path="services" component={Services} />
         <Route path="services/:service" component={Service} />
-        <Route path="nodes" component={Nodes} />
+        <Route path="nodes" component={Nodes} onEnter={requireAdmin} />
       </Route>
 
     </Route>

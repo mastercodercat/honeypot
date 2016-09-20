@@ -15,9 +15,6 @@ import {
 } from '../constants'
 
 const initialState = Immutable.fromJS({
-  username: '',
-  email: '',
-  admin: '',
   users: {},
   loaded: false,
 })
@@ -27,13 +24,6 @@ export default function users(state = initialState, action) {
     case INIT:
     case REDUX_INIT:
       return state
-    case USERS_LOGIN_SUCCESS:
-      return state.withMutations(map => {
-        const data = action.result
-        map.set('username', data.username)
-        map.set('email', data.email)
-        map.set('admin', data.type == 1)
-      })
     case USERS_GET_SUCCESS:
       return state.withMutations(map => {
         const users = action.result

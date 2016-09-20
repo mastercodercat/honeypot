@@ -4,18 +4,31 @@ import hoc from './hoc'
 
 class Login extends Component {
 
+  state = {
+    submitting: false
+  }
+
   handleLogin = (e) => {
     e.preventDefault()
+    this.setState({
+      submitting: true
+    })
     this.props.login(
       this.refs.username.value,
       this.refs.password.value
     )
     .then(() => {
-      this.props.push('/')
+      window.location.href = '/'
+    })
+    .catch(() => {
+      this.setState({
+        submitting: false
+      })
     })
   }
 
   render() {
+    const { submitting } = this.state
     return (
       <div className="login-page">
         <div className="card card-block">
@@ -30,7 +43,7 @@ class Login extends Component {
               <input type="password" className="form-control" id="password" placeholder="Password" ref="password" />
             </div>
             <div className="text-xs-center">
-              <input type="submit" className="btn btn-primary" value="Login" />
+              <input type="submit" className="btn btn-primary" value="Login" disabled={!!submitting} />
             </div>
           </form>
         </div>

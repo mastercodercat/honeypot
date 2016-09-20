@@ -9,6 +9,14 @@
         <link rel="stylesheet" href="{% static "bundles/styles.css" %}">
     </head>
     <body>
+        <script type="text/javascript">
+          {% if user and not user.is_anonymous %}
+            window.honeydbLoggedIn = true;
+            {% if user.is_staff %}
+              window.honeydbAdmin = true;
+            {% endif %}
+          {% endif %}
+        </script>
         <div id="app"></div>
         {% render_bundle 'main' %}
     </body>

@@ -22,9 +22,10 @@ const Sidebar = () => {
       <Link className="navlink" to="/">
         <i className="fa fa-fw fa-database" />
       </Link>
+      {window.honeydbAdmin ?
       <Link className="navlink" to="/nodes">
         <i className="fa fa-fw fa-server" />
-      </Link>
+      </Link> : ''}
     </div>
   )
 }
