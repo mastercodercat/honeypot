@@ -124,6 +124,6 @@ class UserConfigAPI(APIView):
     response = {
       'result': False
     }
-    if config.save():
-      response['result'] = True
+    config.save()
+    response['result'] = True
     return Response(response)
