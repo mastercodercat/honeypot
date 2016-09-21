@@ -42,8 +42,12 @@ export default function users(state = initialState, action) {
         }
         map.set('loaded', true)
       })
+    case USERS_GET:
     case USERS_GET_FAIL:
-      return state.set('loaded', false)
+      return state.withMutations(map => {
+        map.set('users', Immutable.fromJS({}))
+        map.set('loaded', false)
+      })
     case USERS_CONFIG_GET_SUCCESS:
       const data = action.result
       return state.withMutations(map => {

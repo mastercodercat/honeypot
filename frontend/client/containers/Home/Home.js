@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
+import LoadingIndicator from 'components/LoadingIndicator/LoadingIndicator'
+
+import hoc from './hoc'
 
 class Home extends Component {
 
   state = {
     events: Immutable.fromJS({})
+  }
+
+  formatDate(date) {
+    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   }
 
   componentWillMount() {
@@ -20,15 +27,21 @@ class Home extends Component {
     this.setState({
       events: sortedEvents
     })
-  }
-
-  formatDate(date) {
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+    const { getNodes } = this.props
+    getNodes()
   }
 
   render() {
-    const { events } = this.state
+    const {
+      nodes, loadedNodes,
+    } = this.props
+    if (!loadedNodes) {
+      return (
+        <LoadingIndicator />
+      )
+    }
 
+    const { events } = this.state
     const categories = []
     const data = []
     const currentDate = new Date();
@@ -61,9 +74,34 @@ class Home extends Component {
       <div>
         <h3 className="title">Home</h3>
         <ReactHighcharts config={config} />
+        <h5 className="m-t-2">Agents activity</h5>
+        <div className="m-t-2">
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>Agent</th>
+                <th>Status</th>
+                <th>Last 24h events</th>
+                <th>Total events</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                nodes.map((node, i) => (
+                  <tr key={i}>
+                    <td>{node.get('nodename')}</td>
+                    <td className='text-success'>Online</td>
+                    <td>{node.get('events_count_today')}</td>
+                    <td>{node.get('events_count')}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   }
 }
 
-export default Home
+export default hoc(Home)

@@ -8,8 +8,10 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from api.serializers import EventSerializer, NodeSerializer, UserSerializer, UserConfigSerializer
 from api.models import Event, Node, UserConfig
-from honeypot_visualizer.settings import SECRET_KEY
+from honeypot_visualizer.settings import SECRET_KEY, EMAIL_HOST
 import jwt, random
+from datetime import datetime, timedelta, time
+
 
 def get_client_ip(request):
   x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -18,6 +20,7 @@ def get_client_ip(request):
   else:
       ip = request.META.get('REMOTE_ADDR')
   return ip
+
 
 class EventLogger(APIView):
 
@@ -47,11 +50,14 @@ class EventLogger(APIView):
       response['reason'] = 'IP check failed'
       return Response(response)
     # api key check
-    node = Node.objects.filter(nodename=data['nodename'])
+    node = Node.objects.filter(nodename=data['nodename']).first()
     if node is None:
-      response['reason'] = 'Honeypot agent not found'
+      response['result'] = True
+      response['node_registered'] = True
+      newnode = Node(nodename=data['nodename'], api_key='')
+      newnode.save()
       return Response(response)
-    if node.api_key != request.data.get('api_key'):
+    if (node.api_key != request.data.get('api_key')) and (node.api_key != ''):
       response['reason'] = 'Invalid api key'
       return Response(response)
     decoded = jwt.decode(node.api_key, SECRET_KEY, algorithm='HS256')
@@ -59,25 +65,28 @@ class EventLogger(APIView):
       response['reason'] = 'Invalid nodename'
       return Response(response)
     # save event
+    data['node'] = node.id
     serializer = EventSerializer(data=data)
     if serializer.is_valid():
       serializer.save()
       configs = UserConfig.objects.filter(user=request.user)
       if configs.count() > 0:
         config = configs[0]
-        send_mail(
-          'Honeypot Event',
-          'The event ' + data['event'] + ' occurred on honeypot ' + data['nodename'],
-          'notify@honeydb.com',
-          [config.email],
-          fail_silently=True,
-        )
+        if EMAIL_HOST != '':
+          send_mail(
+            'Honeypot Event',
+            'The event ' + data['event'] + ' occurred on honeypot ' + data['nodename'],
+            'notify@honeydb.com',
+            [config.email],
+            fail_silently=True,
+          )
 
       return Response({
         'result': True
       })
 
     return Response(serializer.errors)
+
 
 @api_view(['POST'])
 def login(request):
@@ -97,6 +106,7 @@ def login(request):
       result['type'] = 1
   return Response(result)
 
+
 class EventsList(APIView):
   authentication_classes = (SessionAuthentication,)
   permission_classes = (IsAuthenticated,)
@@ -106,14 +116,31 @@ class EventsList(APIView):
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
 
+
 class NodesList(APIView):
   authentication_classes = (SessionAuthentication,)
   permission_classes = (IsAuthenticated, IsAdminUser)
 
   def get(self, request, format=None):
     nodes = Node.objects.all()
-    serializer = NodeSerializer(nodes, many=True)
-    return Response(serializer.data)
+    response = []
+    for node in nodes:
+      today = datetime.now().date()
+      tomorrow = today + timedelta(1)
+      today_start = datetime.combine(today, time())
+      today_end = datetime.combine(tomorrow, time())
+      nobj = {
+        'id': node.id,
+        'nodename': node.nodename,
+        'owner': node.owner.id if node.owner is not None else 0,
+        'events_count': node.event_set.count(),
+        'events_count_today': node.event_set.filter(datetime__lte=today_end, datetime__gte=today_start).count()
+      }
+      # api key
+      if request.user.is_staff:
+        nobj['api_key'] = node.api_key
+      response.append(nobj)
+    return Response(response)
 
   def post(self, request, format=None):
     response = {
@@ -143,6 +170,7 @@ class NodesList(APIView):
       response['result'] = True
     return Response(response)
 
+
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, IsAdminUser))
 @authentication_classes((SessionAuthentication,))
@@ -161,6 +189,7 @@ def node_regenerate_api_key(request, id=None):
   response['api_key'] = node.api_key
   return Response(response)
 
+
 class UsersList(APIView):
   authentication_classes = (SessionAuthentication,)
   permission_classes = (IsAuthenticated, IsAdminUser)
@@ -169,6 +198,7 @@ class UsersList(APIView):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
+
 
 class UserConfigAPI(APIView):
   authentication_classes = (SessionAuthentication,)
@@ -198,3 +228,4 @@ class UserConfigAPI(APIView):
     config.save()
     response['result'] = True
     return Response(response)
+

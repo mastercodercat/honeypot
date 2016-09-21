@@ -6,7 +6,7 @@ import hoc from './hoc'
 
 export class LayoutContainer extends Component {
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.getEvents()
   }
 

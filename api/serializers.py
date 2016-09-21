@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class EventSerializer(serializers.ModelSerializer):
   class Meta:
     model = Event
-    fields = ('nodename', 'useragent', 'url', 'datetime', 'millisecond', 'session', 'protocol', 'event', 'local_host', 'local_port', 'service', 'remote_host', 'remote_port', 'data')
+    fields = ('nodename', 'useragent', 'url', 'datetime', 'millisecond', 'session', 'protocol', 'event', 'local_host', 'local_port', 'service', 'remote_host', 'remote_port', 'data', 'node')
 
 class NodeSerializer(serializers.ModelSerializer):
   class Meta:

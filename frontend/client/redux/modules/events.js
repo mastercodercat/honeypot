@@ -25,8 +25,12 @@ export default function events(state = initialState, action) {
         map.set('data', Immutable.fromJS(action.result))
         map.set('loaded', true)
       })
+    case DATA_LOAD:
     case DATA_LOAD_FAIL:
-      return state.set('loaded', false)
+      return state.withMutations(map => {
+        map.set('data', Immutable.fromJS({}))
+        map.set('loaded', false)
+      })
     default:
       return state
   }

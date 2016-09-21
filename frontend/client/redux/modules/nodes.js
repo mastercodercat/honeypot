@@ -40,8 +40,12 @@ export default function nodes(state = initialState, action) {
         })
         map.set('loaded', true)
       })
+    case NODES_GET:
     case NODES_GET_FAIL:
-      return state.set('loaded', false)
+      return state.withMutations(map => {
+        map.set('nodes', Immutable.fromJS({}))
+        map.set('loaded', false)
+      })
     case NODES_REGEN_API_SUCCESS:
       const { api_key } = action.result
       console.log(api_key, action.data.id)

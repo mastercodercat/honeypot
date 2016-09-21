@@ -3,6 +3,11 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
+class Node(models.Model):
+  nodename = models.CharField(max_length=50)
+  owner = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
+  api_key = models.CharField(max_length=150, blank=True)
+
 class Event(models.Model):
   nodename = models.CharField(max_length=50)
   useragent = models.CharField(max_length=50)
@@ -18,11 +23,7 @@ class Event(models.Model):
   remote_host = models.CharField(max_length=30)
   remote_port = models.IntegerField()
   data = models.TextField(max_length=300, blank=True, default='')
-
-class Node(models.Model):
-  nodename = models.CharField(max_length=50)
-  owner = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
-  api_key = models.CharField(max_length=150, blank=True)
+  node = models.ForeignKey(Node, on_delete=models.CASCADE)
 
 class UserConfig(models.Model):
   user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)

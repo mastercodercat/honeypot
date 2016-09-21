@@ -36,14 +36,10 @@ class Nodes extends Component {
     })
   }
 
-  componentDidMount() {
-    const { loadedUsers, loadedNodes, getUsers, getNodes } = this.props
-    if (!loadedUsers) {
-      getUsers()
-    }
-    if (!loadedNodes) {
-      getNodes()
-    }
+  componentWillMount() {
+    const { getUsers, getNodes } = this.props
+    getUsers()
+    getNodes()
   }
 
   componentDidUpdate = () => {
@@ -97,6 +93,7 @@ class Nodes extends Component {
                       onChange={e => {
                         this.refs['saveButton' + index].disabled = false
                       }}>
+                      <option value={0}>- Not assigned -</option>
                       {
                         users.valueSeq().map((user, uindex) => (
                           <option key={uindex} value={user.get('id')}>{user.get('username')}</option>

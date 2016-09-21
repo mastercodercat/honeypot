@@ -68,11 +68,13 @@
     <input type="text" id="remote_port" />
     <label>data:</label>
     <input type="text" id="data" /><br />
+    <label>api key:</label>
+    <input type="text" id="api_key" /><br />
     <button id="submit">Submit</button>
     <textarea id="output"></textarea>
   </div>
   <script type='text/javascript'>
-  var fields = ['nodename', 'useragent', 'url', 'datetime', 'millisecond', 'session', 'protocol', 'event', 'local_host', 'local_port', 'service', 'remote_host', 'remote_port', 'data'];
+  var fields = ['nodename', 'useragent', 'url', 'datetime', 'millisecond', 'session', 'protocol', 'event', 'local_host', 'local_port', 'service', 'remote_host', 'remote_port', 'data', 'api_key'];
   function output(value) {
     $('#output').html(JSON.stringify(value));
     console.log(value);
@@ -84,7 +86,7 @@
     });
     data['csrfmiddlewaretoken'] = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     $.ajax({
-      url: '/api/logger',
+      url: '/api/logger/',
       data: data,
       method: 'post',
       success: function(response) {
