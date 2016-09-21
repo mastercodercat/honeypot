@@ -37,6 +37,6 @@ export default function events(state = initialState, action) {
 export function getEvents() {
   return {
     types: [DATA_LOAD, DATA_LOAD_SUCCESS, DATA_LOAD_FAIL],
-    promise: (client) => client.get('/api/events')
+    promise: (client) => client.get('/api/events/')
   }
 }

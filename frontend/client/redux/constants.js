@@ -32,6 +32,14 @@ export const NODES_GET = 'honeydb/NODES/GET'
 export const NODES_GET_SUCCESS = 'honeydb/NODES/GET_SUCCESS'
 export const NODES_GET_FAIL = 'honeydb/NODES/GET_FAIL'
 
+export const NODES_CREATE = 'honeydb/NODES/CREATE'
+export const NODES_CREATE_SUCCESS = 'honeydb/NODES/CREATE_SUCCESS'
+export const NODES_CREATE_FAIL = 'honeydb/NODES/CREATE_FAIL'
+
 export const NODES_UPDATE = 'honeydb/NODES/UPDATE'
 export const NODES_UPDATE_SUCCESS = 'honeydb/NODES/UPDATE_SUCCESS'
 export const NODES_UPDATE_FAIL = 'honeydb/NODES/UPDATE_FAIL'
+
+export const NODES_REGEN_API = 'honeydb/NODES/REGEN_API'
+export const NODES_REGEN_API_SUCCESS = 'honeydb/NODES/REGEN_API_SUCCESS'
+export const NODES_REGEN_API_FAIL = 'honeydb/NODES/REGEN_API_FAIL'

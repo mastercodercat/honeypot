@@ -1,12 +1,23 @@
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from api.serializers import EventSerializer, NodeSerializer, UserSerializer, UserConfigSerializer
 from api.models import Event, Node, UserConfig
+from honeypot_visualizer.settings import SECRET_KEY
+import jwt, random
+
+def get_client_ip(request):
+  x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+  if x_forwarded_for:
+      ip = x_forwarded_for.split(',')[0]
+  else:
+      ip = request.META.get('REMOTE_ADDR')
+  return ip
 
 class EventLogger(APIView):
 
@@ -27,15 +38,43 @@ class EventLogger(APIView):
       'remote_port': request.data.get('remote_port'),
       'data': request.data.get('data')
     }
+    response = {
+      'result': False,
+      'reason': ''
+    }
+    # ip check
+    if get_client_ip(request) != request.data.get('local_host'):
+      response['reason'] = 'IP check failed'
+      return Response(response)
+    # api key check
+    node = Node.objects.filter(nodename=data['nodename'])
+    if node is None:
+      response['reason'] = 'Honeypot agent not found'
+      return Response(response)
+    if node.api_key != request.data.get('api_key'):
+      response['reason'] = 'Invalid api key'
+      return Response(response)
+    decoded = jwt.decode(node.api_key, SECRET_KEY, algorithm='HS256')
+    if decoded['nodename'] != data['nodename']:
+      response['reason'] = 'Invalid nodename'
+      return Response(response)
+    # save event
     serializer = EventSerializer(data=data)
     if serializer.is_valid():
       serializer.save()
-      node = Node.objects.filter(nodename=data['nodename'])
-      if node is None:
-        new_node = Node(nodename=data['nodename'], owner=request.user)
-        new_node.save()
+      configs = UserConfig.objects.filter(user=request.user)
+      if configs.count() > 0:
+        config = configs[0]
+        send_mail(
+          'Honeypot Event',
+          'The event ' + data['event'] + ' occurred on honeypot ' + data['nodename'],
+          'notify@honeydb.com',
+          [config.email],
+          fail_silently=True,
+        )
+
       return Response({
-        'result': 1
+        'result': True
       })
 
     return Response(serializer.errors)
@@ -78,6 +117,20 @@ class NodesList(APIView):
 
   def post(self, request, format=None):
     response = {
+      'result': False,
+      'reason': ''
+    }
+    nodename = request.data.get('nodename')
+    owner_id = request.data.get('owner')
+    owner = User.objects.get(pk=owner_id)
+    api_key = jwt.encode({ 'nodename': nodename, 'rand': int(random.random() * 10000) }, SECRET_KEY, algorithm='HS256')
+    node = Node(nodename=nodename, owner=owner, api_key=api_key)
+    node.save()
+    serializer = NodeSerializer(node)
+    return Response(serializer.data)
+
+  def put(self, request, format=None):
+    response = {
       'result': False
     }
     id = request.data.get('id')
@@ -89,6 +142,24 @@ class NodesList(APIView):
       node.save()
       response['result'] = True
     return Response(response)
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, IsAdminUser))
+@authentication_classes((SessionAuthentication,))
+def node_regenerate_api_key(request, id=None):
+  response = {
+    'result': False,
+    'reason': ''
+  }
+  node = Node.objects.get(pk=id)
+  if node is None:
+    response['reason'] = 'Agent node not found'
+    return Response(response)
+  node.api_key = jwt.encode({ 'nodename': node.nodename, 'rand': int(random.random() * 10000) }, SECRET_KEY, algorithm='HS256')
+  node.save()
+  response['result'] = True
+  response['api_key'] = node.api_key
+  return Response(response)
 
 class UsersList(APIView):
   authentication_classes = (SessionAuthentication,)

@@ -22,6 +22,7 @@ class Event(models.Model):
 class Node(models.Model):
   nodename = models.CharField(max_length=50)
   owner = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
+  api_key = models.CharField(max_length=150, blank=True)
 
 class UserConfig(models.Model):
   user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)

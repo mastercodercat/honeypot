@@ -3,3 +3,4 @@ django-webpack-loader==0.3.3
 djangorestframework==3.4.1
 wheel==0.29.0
 psycopg2==2.6.2
+PyJWT==1.4.2

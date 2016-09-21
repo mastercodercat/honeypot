@@ -14,20 +14,35 @@
   margin: 100px auto 0;
 }
 
+.new-node {
+  .elm {
+    display: inline-block;
+    width: 200px;
+    margin-right: 10px;
+  }
+}
+
 .nodes {
-  max-width: 600px;
-  .nodes-table {
-    width: 100%;
+  border-top: 1px solid #f0f0f1;
+  .node {
+    border-bottom: 1px solid #f0f0f1;
   }
-  td:not(.button) {
-    width: 50%;
+  .user-select {
+    display: inline-block;
+    width: 250px;
+    margin-right: 15px;
   }
-  td.button {
-    width: 50px;
-    padding-left: 15px;
+  .api-key {
+    display: inline-block;
+    word-wrap: break-word;
+    max-width: 100%;
   }
 }
 
 .form {
   max-width: 600px;
+}
+
+.mt-5 {
+  margin-top: 5px;
 }

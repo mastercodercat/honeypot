@@ -23,6 +23,19 @@ class Nodes extends Component {
     }
   }
 
+  createNode = () => {
+    const nodename = this.refs['newnode-name'].value
+    const owner = this.refs['newnode-owner'].value
+    this.refs.newNodeButton.disabled = true
+    this.props.createNode(nodename, owner)
+    .then(r => {
+      this.refs.newNodeButton.disabled = false
+    })
+    .catch(r => {
+      this.refs.newNodeButton.disabled = false
+    })
+  }
+
   componentDidMount() {
     const { loadedUsers, loadedNodes, getUsers, getNodes } = this.props
     if (!loadedUsers) {
@@ -48,6 +61,7 @@ class Nodes extends Component {
     const {
       users, loadedUsers,
       nodes, loadedNodes,
+      regenerateNodeAPIKey,
     } = this.props
 
     if (!loadedNodes || !loadedUsers) {
@@ -59,44 +73,67 @@ class Nodes extends Component {
     return (
       <div>
         <h3 className="title">Nodes</h3>
-        <div className="nodes">
-          <table className="nodes-table">
-            <tbody>
-              {
-                nodes.valueSeq().map((node, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>{node.get('nodename')}</td>
-                      <td>
-                        <select className="form-control" defaultValue={node.get('owner')} ref={"node" + index}
-                          onChange={e => {
-                            this.refs['saveButton' + index].disabled = false
-                          }}>
-                          {
-                            users.valueSeq().map((user, uindex) => (
-                              <option key={uindex} value={user.get('id')}>{user.get('username')}</option>
-                            ))
-                          }
-                        </select>
-                      </td>
-                      <td className="button">
-                        <button className="btn btn-block btn-primary" ref={"saveButton" + index}
-                          onClick={e => {
-                            this.updateNode(node.get('id'), this.refs['node' + index].value)
-                            this.refs['saveButton' + index].disabled = true
-                          }}>
-                          Update this node
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                })
-              }
-            </tbody>
-          </table>
-          <div className="m-t-2 text-xs-right">
+        <div className="new-node m-b-2">
+          <input type="text" className="form-control elm" ref="newnode-name" />
+          <select className="form-control elm" ref="newnode-owner">
+            {
+              users.valueSeq().map((user, uindex) => (
+                <option key={uindex} value={user.get('id')}>{user.get('username')}</option>
+              ))
+            }
+          </select>
+          <button className="btn btn-primary" ref="newNodeButton" onClick={this.createNode}>
+            Create new node
+          </button>
+        </div>
+        <div className="nodes p-t-2">
+          {
+            nodes.valueSeq().map((node, index) => {
+              return (
+                <div className="node m-b-2 p-b-2" key={index}>
+                  <h5>{node.get('nodename')}</h5>
+                  <div className="m-t-1">
+                    <select className="form-control user-select" defaultValue={node.get('owner')} ref={"node" + index}
+                      onChange={e => {
+                        this.refs['saveButton' + index].disabled = false
+                      }}>
+                      {
+                        users.valueSeq().map((user, uindex) => (
+                          <option key={uindex} value={user.get('id')}>{user.get('username')}</option>
+                        ))
+                      }
+                    </select>
+                    <button className="btn btn-primary" ref={"saveButton" + index}
+                      onClick={e => {
+                        this.updateNode(node.get('id'), this.refs['node' + index].value)
+                        this.refs['saveButton' + index].disabled = true
+                      }}>
+                      Reassign to user
+                    </button>
+                  </div>
+                  <div className="m-t-1">
+                    API Key: <span className="api-key">{node.get('api_key')}</span>
+                    <button className="btn btn-primary" ref={"regenApiButton" + index}
+                      onClick={e => {
+                        this.refs["regenApiButton" + index].disabled = true
+                        regenerateNodeAPIKey(node.get('id'))
+                        .then(() => {
+                          this.refs["regenApiButton" + index].disabled = false
+                        })
+                        .catch(() => {
+                          this.refs["regenApiButton" + index].disabled = false
+                        })
+                      }}>
+                      Regenerate
+                    </button>
+                  </div>
+                </div>
+              )
+            })
+          }
+          {/*<div className="m-t-2 text-xs-right">
             <button className="btn btn-primary" onClick={this.updateAllNodes}>Save All</button>
-          </div>
+          </div>*/}
         </div>
       </div>
     )

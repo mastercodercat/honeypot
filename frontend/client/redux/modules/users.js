@@ -61,27 +61,27 @@ export default function users(state = initialState, action) {
 export function login(username, password) {
   return {
     types: [USERS_LOGIN, USERS_LOGIN_SUCCESS, USERS_LOGIN_FAIL],
-    promise: (client) => client.post('/api/login', { data: { username, password } })
+    promise: (client) => client.post('/api/login/', { data: { username, password } })
   }
 }
 
 export function getUsers() {
   return {
     types: [USERS_GET, USERS_GET_SUCCESS, USERS_GET_FAIL],
-    promise: (client) => client.get('/api/users')
+    promise: (client) => client.get('/api/users/')
   }
 }
 
 export function getUserConfig() {
   return {
     types: [USERS_CONFIG_GET, USERS_CONFIG_GET_SUCCESS, USERS_CONFIG_GET_FAIL],
-    promise: (client) => client.get('/api/userconfig')
+    promise: (client) => client.get('/api/userconfig/')
   }
 }
 
 export function updateUserConfig(data) {
   return {
     types: [USERS_CONFIG_UPDATE, USERS_CONFIG_UPDATE_SUCCESS, USERS_CONFIG_UPDATE_FAIL],
-    promise: (client) => client.post('/api/userconfig', { data })
+    promise: (client) => client.post('/api/userconfig/', { data })
   }
 }
