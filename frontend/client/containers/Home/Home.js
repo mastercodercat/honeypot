@@ -17,16 +17,34 @@ class Home extends Component {
 
   componentWillMount() {
     const { events } = this.props
+    // calculate dateToIndexes
+    let dateToIndexes = Immutable.fromJS({})
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - startDate.getDay() + 1)
+    startDate.setHours(0); startDate.setMinutes(0); startDate.setSeconds(0); startDate.setMilliseconds(0);
+    for(let i = 0; i < 7; i++) {
+      dateToIndexes = dateToIndexes.set(this.formatDate(startDate), i)
+      startDate.setDate(startDate.getDate() + 1)
+    }
+    // calculate stacked column data
     let sortedEvents = Immutable.fromJS({})
+    const defaultArray = [0, 0, 0, 0, 0, 0, 0]
+    const tmpdt = new Date();
+    tmpdt.setDate(tmpdt.getDate() - tmpdt.getDay() + 1)
     events.map(event => {
       const date = this.formatDate(new Date(event.get('datetime')))
-      const arrayInDay = sortedEvents.get(date) ? sortedEvents.get(date) : []
-      arrayInDay.push(event)
-      sortedEvents = sortedEvents.set(date, arrayInDay)
+      const i = dateToIndexes.get(date)
+      if (i || i === 0) {
+        const nm = event.get('nodename')
+        const data = sortedEvents.get(nm) ? sortedEvents.get(nm) : defaultArray.slice()
+        data[i] += 1;
+        sortedEvents = sortedEvents.set(nm, data)
+      }
     })
     this.setState({
       events: sortedEvents
     })
+    // get nodes data
     const { getNodes } = this.props
     getNodes()
   }
@@ -42,33 +60,59 @@ class Home extends Component {
     }
 
     const { events } = this.state
-    const categories = []
+    const weekDates = []
     const data = []
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1);
     for(let i = 0; i < 7; i++) {
       const date = this.formatDate(currentDate)
-      const eventsInDay = events.get(date)
-      const eventsCount = eventsInDay ? eventsInDay.length : 0
-      categories.push(date)
-      data.push(eventsCount)
+      weekDates.push(date)
       currentDate.setDate(currentDate.getDate() + 1);
     }
+    events.map((nodeData, key) => {
+      data.push({
+        name: key,
+        data: nodeData
+      })
+    })
 
     const config = {
       chart: {
         type: 'column'
       },
-      xAxis: {
-        categories: categories
-      },
-      series: [{
-        name: 'Events',
-        data: data
-      }],
       title: {
         text: 'Honeypot Activity'
       },
+      xAxis: {
+        categories: weekDates
+      },
+      legend: {
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 25,
+        floating: true,
+        backgroundColor: 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+      },
+      tooltip: {
+        pointFormat: '{series.name}: {point.y}'
+      },
+      plotOptions: {
+        column: {
+          stacking: 'normal',
+          dataLabels: {
+            enabled: true,
+            color: 'white',
+            style: {
+              textShadow: '0 0 3px black'
+            }
+          }
+        }
+      },
+      series: data,
     }
     return (
       <div>
@@ -87,7 +131,7 @@ class Home extends Component {
             </thead>
             <tbody>
               {
-                nodes.map((node, i) => (
+                nodes.valueSeq().map((node, i) => (
                   <tr key={i}>
                     <td>{node.get('nodename')}</td>
                     <td className='text-success'>Online</td>
