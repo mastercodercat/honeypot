@@ -15,6 +15,17 @@ class Home extends Component {
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   }
 
+  onClickPie = (e) => {
+    const elm = e.target
+    const parent = e.target.parentElement
+    const index = Array.prototype.indexOf.call(parent.childNodes, elm)
+    const date = new Date()
+    date.setDate(date.getDate() - date.getDay() + 1 + index);
+    setTimeout(() => {
+      this.props.push(`/daily/${this.formatDate(date)}`)
+    }, 500)
+  }
+
   componentWillMount() {
     const { events } = this.props
     // calculate dateToIndexes
@@ -72,7 +83,10 @@ class Home extends Component {
     events.map((nodeData, key) => {
       data.push({
         name: key,
-        data: nodeData
+        data: nodeData,
+        events: {
+          click: this.onClickPie
+        }
       })
     })
 
