@@ -14,9 +14,9 @@ class DailyActivity extends Component {
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   }
 
-  updateState = (_agents) => {
+  updatedState = (agents) => {
     const { events } = this.props
-    const agents = _agents ? _agents : this.state.agents
+    // const agents = _agents ? _agents : this.state.agents
     const currentDate = this.props.params.date
     let byHost = Immutable.fromJS({})
     let byPort = Immutable.fromJS({})
@@ -49,10 +49,10 @@ class DailyActivity extends Component {
         y: bp.length
       })
     })
-    this.setState({
+    return {
       countByHost,
       countByPort
-    })
+    }
   }
 
   componentWillMount() {
@@ -68,11 +68,11 @@ class DailyActivity extends Component {
     this.setState({
       agents
     })
-    this.updateState(agents)
+    this.setState(this.updatedState(agents))
   }
 
   render() {
-    const { countByHost, countByPort } = this.state
+    const { countByHost, countByPort, agents } = this.state
     const configHosts = {
       chart: {
         type: 'pie',
@@ -125,6 +125,30 @@ class DailyActivity extends Component {
           <div className="col-md-6">
             <ReactHighcharts config={configPorts} />
           </div>
+        </div>
+        <div className="m-t-2">
+          <h4 className="m-t-2 m-b-1">Agents</h4>
+          {
+            agents.map((value, k) => (
+              <div className="form-check" key={k}>
+                <label className="form-check-label">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    checked={value}
+                    onChange={e => {
+                      let _agents = this.state.agents
+                      const pv = _agents.get(k)
+                      _agents = _agents.set(k, !pv)
+                      const _state = this.updatedState(_agents)
+                      _state.agents = _agents
+                      this.setState(_state)
+                    }} />
+                  {k}
+                </label>
+              </div>
+            ))
+          }
         </div>
       </div>
     )
