@@ -69,10 +69,9 @@ class EventLogger(APIView):
     serializer = EventSerializer(data=data)
     if serializer.is_valid():
       serializer.save()
-      configs = UserConfig.objects.filter(user=request.user)
-      if configs.count() > 0:
-        config = configs[0]
-        if EMAIL_HOST != '':
+      if node.owner is not None:
+        config = UserConfig.objects.filter(user=node.owner).first()
+        if (config is not None) and (EMAIL_HOST != '') and (config.email != ''):
           send_mail(
             'Honeypot Event',
             'The event ' + data['event'] + ' occurred on honeypot ' + data['nodename'],
