@@ -68,7 +68,7 @@ class Nodes extends Component {
 
     return (
       <div>
-        <h3 className="title">Nodes</h3>
+        <h3 className="title">Agents</h3>
         <div className="new-node m-b-2">
           <input type="text" className="form-control elm" ref="newnode-name" />
           <select className="form-control elm" ref="newnode-owner">
@@ -79,7 +79,7 @@ class Nodes extends Component {
             }
           </select>
           <button className="btn btn-primary" ref="newNodeButton" onClick={this.createNode}>
-            Create new node
+            Create new agent
           </button>
         </div>
         <div className="nodes p-t-2">
@@ -107,10 +107,48 @@ class Nodes extends Component {
                       }}>
                       Reassign to user
                     </button>
+                    <span className="node-delete-buttons">
+                      <button
+                        className="btn btn-danger"
+                        ref={"clearEventsButton" + index}
+                        onClick={e => {
+                          if (confirm('Do you want to clear all events of this agent?')) {
+                            this.refs["clearEventsButton" + index].disabled = true
+                            this.props.clearNodeEvents(node.get('id'))
+                            .then(() => {
+                              this.refs["clearEventsButton" + index].disabled = false
+                            })
+                            .catch(() => {
+                              this.refs["clearEventsButton" + index].disabled = false
+                            })
+                          }
+                        }}
+                        >
+                        Clear all events
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        ref={"removeAgentButton" + index}
+                        onClick={e => {
+                          if (confirm('Do you really want to remove this agent?')) {
+                            this.refs["removeAgentButton" + index].disabled = true
+                            this.props.deleteNode(node.get('id'))
+                            .then(() => {
+                              this.refs["removeAgentButton" + index].disabled = false
+                            })
+                            .catch(() => {
+                              this.refs["removeAgentButton" + index].disabled = false
+                            })
+                          }
+                        }}
+                        >
+                        Remove Agent
+                      </button>
+                    </span>
                   </div>
                   <div className="m-t-1">
                     API Key: <span className="api-key">{node.get('api_key')}</span>
-                    <button className="btn btn-primary" ref={"regenApiButton" + index}
+                    <button className="btn btn-primary btn-regenapi" ref={"regenApiButton" + index}
                       onClick={e => {
                         this.refs["regenApiButton" + index].disabled = true
                         regenerateNodeAPIKey(node.get('id'))

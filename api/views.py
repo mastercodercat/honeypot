@@ -121,6 +121,7 @@ class NodesList(APIView):
   authentication_classes = (SessionAuthentication,)
   permission_classes = (IsAuthenticated, IsAdminUser)
 
+  # get list
   def get(self, request, format=None):
     nodes = Node.objects.all()
     response = []
@@ -142,6 +143,7 @@ class NodesList(APIView):
       response.append(nobj)
     return Response(response)
 
+  # create node
   def post(self, request, format=None):
     response = {
       'result': False,
@@ -156,6 +158,7 @@ class NodesList(APIView):
     serializer = NodeSerializer(node)
     return Response(serializer.data)
 
+  # assign to user
   def put(self, request, format=None):
     response = {
       'result': False
@@ -169,6 +172,37 @@ class NodesList(APIView):
       node.save()
       response['result'] = True
     return Response(response)
+
+  # remove node
+  def delete(self, request, format=None):
+    response = {
+      'result': False
+    }
+    id = request.data.get('id')
+    node = Node.objects.get(pk=id)
+    if node is None:
+      response['reason'] = 'Agent node not found'
+      return Response(response)
+    node.delete()
+    response['result'] = True
+    return Response(response)
+
+
+@api_view(['DELETE'])
+@permission_classes((IsAuthenticated, IsAdminUser))
+@authentication_classes((SessionAuthentication,))
+def node_clear_events(request, id=None):
+  response = {
+    'result': False,
+    'reason': ''
+  }
+  node = Node.objects.get(pk=id)
+  if node is None:
+    response['reason'] = 'Agent node not found'
+    return Response(response)
+  node.event_set.all().delete()
+  response['result'] = True
+  return Response(response)
 
 
 @api_view(['POST'])

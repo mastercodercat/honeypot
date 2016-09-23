@@ -22,10 +22,11 @@
   }
 }
 
+$border-color: #e0e0e1;
 .nodes {
-  border-top: 1px solid #f0f0f1;
+  border-top: 1px solid $border-color;
   .node {
-    border-bottom: 1px solid #f0f0f1;
+    border-bottom: 1px solid $border-color;
   }
   .user-select {
     display: inline-block;
@@ -36,6 +37,15 @@
     display: inline-block;
     word-wrap: break-word;
     max-width: 100%;
+    margin-right: 10px;
+  }
+  .node-delete-buttons {
+    display: inline-block;
+    margin-left: 60px;
+    white-space: nowrap;
+    > button {
+      margin-left: 10px;
+    }
   }
 }
 

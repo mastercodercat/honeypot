@@ -40,6 +40,14 @@ export const NODES_UPDATE = 'honeydb/NODES/UPDATE'
 export const NODES_UPDATE_SUCCESS = 'honeydb/NODES/UPDATE_SUCCESS'
 export const NODES_UPDATE_FAIL = 'honeydb/NODES/UPDATE_FAIL'
 
+export const NODES_DELETE = 'honeydb/NODES/DELETE'
+export const NODES_DELETE_SUCCESS = 'honeydb/NODES/DELETE_SUCCESS'
+export const NODES_DELETE_FAIL = 'honeydb/NODES/DELETE_FAIL'
+
 export const NODES_REGEN_API = 'honeydb/NODES/REGEN_API'
 export const NODES_REGEN_API_SUCCESS = 'honeydb/NODES/REGEN_API_SUCCESS'
 export const NODES_REGEN_API_FAIL = 'honeydb/NODES/REGEN_API_FAIL'
+
+export const NODES_CLEAR_EVENTS = 'honeydb/NODES/CLEAR_EVENTS'
+export const NODES_CLEAR_EVENTS_SUCCESS = 'honeydb/NODES/CLEAR_EVENTS_SUCCESS'
+export const NODES_CLEAR_EVENTS_FAIL = 'honeydb/NODES/CLEAR_EVENTS_FAIL'

@@ -18,9 +18,17 @@ import {
   NODES_UPDATE_SUCCESS,
   NODES_UPDATE_FAIL,
 
+  NODES_DELETE,
+  NODES_DELETE_SUCCESS,
+  NODES_DELETE_FAIL,
+
   NODES_REGEN_API,
   NODES_REGEN_API_SUCCESS,
   NODES_REGEN_API_FAIL,
+
+  NODES_CLEAR_EVENTS,
+  NODES_CLEAR_EVENTS_SUCCESS,
+  NODES_CLEAR_EVENTS_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -55,6 +63,11 @@ export default function nodes(state = initialState, action) {
         const node = action.result
         return state.setIn(['nodes', node.id], Immutable.fromJS(node))
       }
+    case NODES_DELETE_SUCCESS:
+      {
+        const id = action.data.id
+        return state.deleteIn(['nodes', id])
+      }
     default:
       return state
   }
@@ -81,6 +94,16 @@ export function updateNodeOwner(id, owner) {
   }
 }
 
+export function deleteNode(id) {
+  return {
+    types: [NODES_DELETE, NODES_DELETE_SUCCESS, NODES_DELETE_FAIL],
+    promise: (client) => client.del('/api/nodes/', { data: { id } }),
+    data: {
+      id
+    }
+  }
+}
+
 export function regenerateNodeAPIKey(id) {
   return {
     types: [NODES_REGEN_API, NODES_REGEN_API_SUCCESS, NODES_REGEN_API_FAIL],
@@ -88,5 +111,12 @@ export function regenerateNodeAPIKey(id) {
     data: {
       id
     }
+  }
+}
+
+export function clearNodeEvents(id) {
+  return {
+    types: [NODES_CLEAR_EVENTS, NODES_CLEAR_EVENTS_SUCCESS, NODES_CLEAR_EVENTS_FAIL],
+    promise: (client) => client.del(`/api/nodes/${id}/clearevents/`, { data: { id } })
   }
 }
