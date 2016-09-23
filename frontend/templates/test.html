@@ -3,7 +3,8 @@
 <head>
   <script src='/assets/js/jquery-1.12.4.js'></script>
   <style type='text/css'>
-  input[type="text"] {
+  input[type="text"],
+  select {
     display: inline-block;
     width: 300px;
     margin-bottom: 10px;
@@ -51,21 +52,49 @@
     <label>millisecond:</label>
     <input type="text" id="millisecond" />
     <label>session:</label>
-    <input type="text" id="session" /><br />
+    <!--<input type="text" id="session" />-->
+    <select id="session">
+      <option value="session-01">session-01</option>
+      <option value="session-02">session-02</option>
+      <option value="session-03">session-03</option>
+      <option value="session-04">session-04</option>
+      <option value="session-05">session-05</option>
+    </select><br />
     <label>protocol:</label>
-    <input type="text" id="protocol" />
+    <!--<input type="text" id="protocol" />-->
+    <select id="protocol">
+      <option value="TCP">TCP</option>
+      <option value="UDP">UDP</option>
+      <option value="FTP">FTP</option>
+      <option value="IMAP">IMAP</option>
+    </select>
     <label>event:</label>
-    <input type="text" id="event" /><br />
+    <!--<input type="text" id="event" />-->
+    <select id="event">
+      <option value="CONNECT">CONNECT</option>
+      <option value="PING">PING</option>
+      <option value="DOWNLOAD">DOWNLOAD</option>
+    </select><br />
     <label>local host:</label>
-    <input type="text" id="local_host" />
+    <input type="text" id="local_host" value="127.0.0.1" />
     <label>local port:</label>
-    <input type="text" id="local_port" /><br />
+    <input type="text" id="local_port" value="5000" /><br />
     <label>service:</label>
-    <input type="text" id="service" />
+    <!--<input type="text" id="service" />-->
+    <select id="service">
+      <option value="Telnet">Telnet</option>
+      <option value="Share">Share</option>
+      <option value="Ping">Ping</option>
+    </select><br />
     <label>remote host:</label>
-    <input type="text" id="remote_host" /><br />
+    <!--<input type="text" id="remote_host" />-->
+    <select id="remote_host">
+      <option value="10.0.1.101">10.0.1.101</option>
+      <option value="10.0.1.102">10.0.1.102</option>
+      <option value="10.0.1.103">10.0.1.103</option>
+    </select>
     <label>remote port:</label>
-    <input type="text" id="remote_port" />
+    <input type="text" id="remote_port" /><br />
     <label>data:</label>
     <input type="text" id="data" /><br />
     <label>api key:</label>
