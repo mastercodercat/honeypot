@@ -85,14 +85,38 @@ class Host extends Component {
         <div className="m-t-3">
           <div>
             Lookup tools:
-            <a className="lookup-link" href="" target="_blank">DShield</a>
-            <a className="lookup-link" href="" target="_blank">Firyx</a>
-            <a className="lookup-link" href="" target="_blank">Twitter</a>
-            <a className="lookup-link" href="" target="_blank">Google</a>
-            <a className="lookup-link" href="" target="_blank">Virus Total</a>
-            <a className="lookup-link" href="" target="_blank">Spamhaus</a>
-            <a className="lookup-link" href="" target="_blank">Spamcop</a>
-            <a className="lookup-link" href="" target="_blank">Senderbase</a>
+            <a
+              className="lookup-link"
+              href={`https://www.dshield.org/ipinfo.html?ip=${currentHost}`}
+              target="_blank">DShield</a>
+            <a 
+              className="lookup-link"
+              href={`https://www.firyx.com/whois?ip=${currentHost}`}
+              target="_blank">Firyx</a>
+            <a
+              className="lookup-link"
+              href={`https://twitter.com/search?f=tweets&q=${currentHost}&src=typd`}
+              target="_blank">Twitter</a>
+            <a
+              className="lookup-link"
+              href={`https://www.google.hu/?gfe_rd=cr&ei=SOzoV-zrEuav8wf65464Dg#q=${currentHost}`}
+              target="_blank">Google</a>
+            <a
+              className="lookup-link"
+              href={`https://www.virustotal.com/en/ip-address/${currentHost}/information/`}
+              target="_blank">Virus Total</a>
+            <a
+              className="lookup-link"
+              href={`https://www.spamhaus.org/query/ip/${currentHost}`}
+              target="_blank">Spamhaus</a>
+            <a
+              className="lookup-link"
+              href={`https://www.spamcop.net/w3m?action=checkblock&ip=${currentHost}`}
+              target="_blank">Spamcop</a>
+            <a
+              className="lookup-link"
+              href={`https://www.senderbase.org/lookup/?search_string=${currentHost}`}
+              target="_blank">Senderbase</a>
           </div>
         </div>
       </div>
