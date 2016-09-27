@@ -85,6 +85,9 @@ class Host extends Component {
         data: data
       }],
     }
+
+    let ti = 0
+
     return (
       <div>
         <h3 className="title">Host</h3>
@@ -148,8 +151,15 @@ class Host extends Component {
                   <div className="protocol">{protocol}</div>
                   {
                     protocolEvents.map((serviceEvents, service) => (
-                      <div key={service}>
-                        <div className="service">{service}</div>
+                      <div className="service-sessions" key={service}>
+                        <div className="service" onClick={e => {
+                            const container = e.currentTarget.parentNode
+                            if (container.classList.contains('open')) {
+                              container.classList.remove('open')
+                            } else {
+                              container.classList.add('open')
+                            }
+                          }}>{service}</div>
                         <div className="sessions">
                           {
                             serviceEvents.map((event, i) => {

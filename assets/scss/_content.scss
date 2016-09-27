@@ -66,6 +66,7 @@ $border-color: #e0e0e1;
   }
   .service {
     margin-left: 25px;
+    cursor: pointer;
   }
   .sessions {
     margin-left: 50px;
@@ -77,5 +78,14 @@ $border-color: #e0e0e1;
   .eventData {
     width: 50%;
     float: left;
+  }
+  .service-sessions {
+    .sessions {
+      max-height: 0;
+      overflow-y: hidden;
+    }
+    &.open .sessions {
+      max-height: 9999px;
+    }
   }
 }
