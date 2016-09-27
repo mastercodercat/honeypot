@@ -84,8 +84,19 @@ $border-color: #e0e0e1;
       max-height: 0;
       overflow-y: hidden;
     }
-    &.open .sessions {
-      max-height: 9999px;
+    .opened-icon {
+      display: none;
+    }
+    &.open {
+      .sessions {
+        max-height: 9999px;
+      }
+      .opened-icon {
+        display: inline-block;
+      }
+      .closed-icon {
+        display: none;
+      }
     }
   }
 }

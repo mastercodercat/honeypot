@@ -159,7 +159,12 @@ class Host extends Component {
                             } else {
                               container.classList.add('open')
                             }
-                          }}>{service}</div>
+                          }}>
+                          <i className="closed-icon fa fa-caret-right" />
+                          <i className="opened-icon fa fa-caret-down" />
+                          &nbsp;
+                          {service}
+                        </div>
                         <div className="sessions">
                           {
                             serviceEvents.map((event, i) => {
