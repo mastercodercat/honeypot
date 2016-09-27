@@ -6,6 +6,15 @@ class Host extends Component {
 
   state = {
     period: 1,
+    selectedEvent: null
+  }
+
+  toDoubleDigits(n) {
+    return n < 10 ? ('0' + n) : n
+  }
+
+  formatDate(date) {
+    return date.getFullYear() + '-' + this.toDoubleDigits(date.getMonth() + 1) + '-' + this.toDoubleDigits(date.getDate())
   }
 
   calculateData = () => {
@@ -15,6 +24,7 @@ class Host extends Component {
     const date = new Date()
     date.setHours(date.getHours() - period)
     let sortedEvents = Immutable.fromJS({})
+    let psSortedEvents = Immutable.fromJS({})
     events.map(event => {
       const host = event.get('remote_host')
       if (host == currentHost) {
@@ -24,15 +34,26 @@ class Host extends Component {
           const eventsOfService = sortedEvents.get(service) ? sortedEvents.get(service) : []
           eventsOfService.push(event)
           sortedEvents = sortedEvents.set(service, eventsOfService)
+          // Sort by protocol
+          const protocol = event.get('protocol')
+          let _events = psSortedEvents.get(protocol)
+          _events = _events ? _events : Immutable.fromJS({})
+          let _eventsByService = _events.get(service)
+          _eventsByService = _eventsByService ? _eventsByService : []
+          // _eventsByService = _eventsByService.set(service, event)
+          _eventsByService.push(event)
+          _events = _events.set(service, _eventsByService)
+          psSortedEvents = psSortedEvents.set(protocol, _events)
         }
       }
     })
-    return sortedEvents
+    console.log(psSortedEvents.toJS())
+    return { events: sortedEvents, psSortedEvents }
   }
 
   render() {
-    const { period } = this.state
-    const events = this.calculateData()
+    const { period, selectedEvent } = this.state
+    const { events, psSortedEvents } = this.calculateData()
     const currentHost = this.props.params.host
 
     const data = []
@@ -117,6 +138,46 @@ class Host extends Component {
               className="lookup-link"
               href={`https://www.senderbase.org/lookup/?search_string=${currentHost}`}
               target="_blank">Senderbase</a>
+          </div>
+        </div>
+        <div className="m-t-3 host-data clearfix">
+          <div className="events">
+            {
+              psSortedEvents.map((protocolEvents, protocol) => (
+                <div key={protocol}>
+                  <div className="protocol">{protocol}</div>
+                  {
+                    protocolEvents.map((serviceEvents, service) => (
+                      <div key={service}>
+                        <div className="service">{service}</div>
+                        <div className="sessions">
+                          {
+                            serviceEvents.map((event, i) => {
+                              const date = new Date(event.get('datetime'))
+                              return (
+                                <div key={i} className="session" onClick={e => {
+                                    content = `
+                                      <h4 className="m-b-2">
+                                        ${event.get('protocol')} > ${event.get('service')} > ${event.get('session')}
+                                      </h4>
+                                      ${event.get('data')}
+                                    `
+                                    this.refs.eventData.innerHTML = content
+                                  }}>
+                                  {this.formatDate(date)} {event.get('session')}
+                                </div>
+                              )
+                            })
+                          }
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              ))
+            }
+          </div>
+          <div className="event-data" ref="eventData">
           </div>
         </div>
       </div>

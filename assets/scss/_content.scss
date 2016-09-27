@@ -59,3 +59,23 @@ $border-color: #e0e0e1;
   margin-left: 10px;
   border: 1px solid #a0a0f0;
 }
+
+.host-data {
+  .protocol {
+    margin-top: 10px;
+  }
+  .service {
+    margin-left: 25px;
+  }
+  .sessions {
+    margin-left: 50px;
+  }
+  .session {
+    cursor: pointer;
+  }
+  .events,
+  .eventData {
+    width: 50%;
+    float: left;
+  }
+}
