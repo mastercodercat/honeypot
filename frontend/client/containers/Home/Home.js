@@ -15,15 +15,29 @@ class Home extends Component {
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   }
 
-  onClickPie = (e) => {
-    const elm = e.target
-    const parent = e.target.parentElement
-    const index = Array.prototype.indexOf.call(parent.childNodes, elm)
+  getIndex(elm) {
+    const parent = elm.parentElement
+    return Array.prototype.indexOf.call(parent.childNodes, elm)
+  }
+
+  handleClickColumn = (e) => {
+    if (e.target.tagName != 'rect') {
+      return;
+    }
+    const dateIndex = this.getIndex(e.target)
     const date = new Date()
-    date.setDate(date.getDate() - date.getDay() + 1 + index);
-    setTimeout(() => {
-      this.props.push(`/daily/${this.formatDate(date)}`)
-    }, 500)
+    date.setDate(date.getDate() - date.getDay() + 1 + dateIndex);
+    const nodeIndex = this.getIndex(e.target.parentElement) / 2
+    const nodename = this.state.events.keySeq().get(nodeIndex)
+    if (nodename) {
+      setTimeout(() => {
+        this.props.push(`/daily/${this.formatDate(date)}/agent/${nodename}`)
+      }, 10)
+    }
+  }
+
+  handleClickDate = (e) => {
+    console.log(e.target)
   }
 
   componentWillMount() {
@@ -85,7 +99,7 @@ class Home extends Component {
         name: key,
         data: nodeData,
         events: {
-          click: this.onClickPie
+          click: this.handleClickColumn
         }
       })
     })
@@ -98,7 +112,10 @@ class Home extends Component {
         text: 'Honeypot Activity'
       },
       xAxis: {
-        categories: weekDates
+        categories: weekDates,
+        events: {
+          click: this.handleClickDate,
+        },
       },
       legend: {
         align: 'right',
@@ -130,7 +147,7 @@ class Home extends Component {
                 return null;
               }
             },
-          }
+          },
         }
       },
       series: data,

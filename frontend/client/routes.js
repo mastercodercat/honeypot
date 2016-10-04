@@ -33,6 +33,7 @@ const routes = () => {
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="home" component={Home} />
         <Route path="daily/:date" component={DailyActivity} />
+        <Route path="daily/:date/agent/:agent" component={DailyActivity} />
         <Route path="hosts" component={Hosts} />
         <Route path="hosts/:host" component={Host} />
         <Route path="services" component={Services} />
