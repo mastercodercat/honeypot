@@ -121,8 +121,15 @@ class Home extends Component {
             enabled: true,
             color: 'white',
             style: {
-              textShadow: '0 0 3px black'
-            }
+              textShadow: '0 0 3px black',
+            },
+            formatter: function() {
+              if (this.y != 0) {
+                return this.y;
+              } else {
+                return null;
+              }
+            },
           }
         }
       },

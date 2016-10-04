@@ -10,7 +10,7 @@ import Services from './containers/Services/Services'
 import Service from './containers/Service/Service'
 import Nodes from './containers/Nodes/Nodes'
 import UserConfig from './containers/UserConfig/UserConfig'
-import DailyActivity from './containers/DailyActivity/DailyActivity'
+import AgentView from './containers/AgentView/AgentView'
 
 const requireAuth = (nextState, replace) => {
   if (!window.honeydbLoggedIn) {
@@ -32,7 +32,7 @@ const routes = () => {
 
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="home" component={Home} />
-        <Route path="daily/:date" component={DailyActivity} />
+        <Route path="daily/:date" component={AgentView} />
         <Route path="hosts" component={Hosts} />
         <Route path="hosts/:host" component={Host} />
         <Route path="services" component={Services} />

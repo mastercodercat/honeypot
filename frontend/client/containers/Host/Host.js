@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
+import { DateRange, DateRangePicker } from 'components/DateRangePicker/DateRangePicker'
+
 class Host extends Component {
 
   state = {
-    period: 1,
+    range: new DateRange(),
     selectedEvent: null
   }
 
@@ -20,16 +22,14 @@ class Host extends Component {
   calculateData = () => {
     const { events } = this.props
     const currentHost = this.props.params.host
-    const { period } = this.state
-    const date = new Date()
-    date.setHours(date.getHours() - period)
+    const { range } = this.state
     let sortedEvents = Immutable.fromJS({})
     let psSortedEvents = Immutable.fromJS({})
     events.map(event => {
       const host = event.get('remote_host')
       if (host == currentHost) {
         const eventDate = new Date(event.get('datetime'))
-        if (eventDate >= date) {
+        if (range.isIn(eventDate)) {
           const service = event.get('service')
           const eventsOfService = sortedEvents.get(service) ? sortedEvents.get(service) : []
           eventsOfService.push(event)
@@ -52,7 +52,7 @@ class Host extends Component {
   }
 
   render() {
-    const { period, selectedEvent } = this.state
+    const { range, selectedEvent } = this.state
     const { events, psSortedEvents } = this.calculateData()
     const currentHost = this.props.params.host
 
@@ -92,18 +92,9 @@ class Host extends Component {
       <div>
         <h3 className="title">Host</h3>
         <div className="m-t-3 m-b-2">
-          <label>Period:</label>
-          <select
-            className="form-control"
-            style={{ width: 300 }}
-            value={period}
-            onChange={e => this.setState({ period: e.currentTarget.value })}>
-            <option value={1}>Last one hour</option>
-            <option value={24}>Last one day</option>
-            <option value={168}>Last one week</option>
-            <option value={168 * 30}>Last 30 days</option>
-            <option value={168 * 180}>Last 6 months</option>
-          </select>
+          <DateRangePicker
+            value={range}
+            onChange={range => this.setState({ range })} />
         </div>
         <ReactHighcharts config={config} />
         <div className="m-t-3">

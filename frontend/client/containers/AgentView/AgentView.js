@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
-class DailyActivity extends Component {
+class AgentView extends Component {
 
   state = {
     countByHost: Immutable.fromJS({}),
@@ -155,4 +155,4 @@ class DailyActivity extends Component {
   }
 }
 
-export default DailyActivity
+export default AgentView
