@@ -56,7 +56,6 @@ export default function nodes(state = initialState, action) {
       })
     case NODES_REGEN_API_SUCCESS:
       const { api_key } = action.result
-      console.log(api_key, action.data.id)
       return state.setIn(['nodes', action.data.id, 'api_key'], api_key)
     case NODES_CREATE_SUCCESS:
       {

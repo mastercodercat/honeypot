@@ -47,7 +47,6 @@ class Host extends Component {
         }
       }
     })
-    console.log(psSortedEvents.toJS())
     return { events: sortedEvents, psSortedEvents }
   }
 

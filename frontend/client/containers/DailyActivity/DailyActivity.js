@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
+import hoc from './hoc'
+
 class DailyActivity extends Component {
 
   state = {
@@ -55,6 +57,34 @@ class DailyActivity extends Component {
     }
   }
 
+  getClickedIndex(elm) {
+    const parent = elm.parentElement
+    const index = Array.prototype.indexOf.call(parent.childNodes, elm)
+    return index
+  }
+
+  handleHostClick = (e) => {
+    const index = this.getClickedIndex(e.target)
+    const { countByHost } = this.state
+    const host = countByHost[index].name
+    if (host) {
+      setTimeout(() => {
+        this.props.push(`/hosts/${host}`)
+      }, 500)
+    }
+  }
+
+  handleServiceClick = (e) => {
+    const index = this.getClickedIndex(e.target)
+    const { countbyService } = this.state
+    const service = countbyService[index].name
+    if (service) {
+      setTimeout(() => {
+        this.props.push(`/services/${service}`)
+      }, 500)
+    }
+  }
+
   componentWillMount() {
     const { events } = this.props
     const currentDate = this.props.params.date
@@ -91,7 +121,10 @@ class DailyActivity extends Component {
       },
       series: [{
         name: 'Hosts',
-        data: countByHost
+        data: countByHost,
+        events: {
+          click: this.handleHostClick
+        }
       }],
     }
     const configServices = {
@@ -112,7 +145,10 @@ class DailyActivity extends Component {
       },
       series: [{
         name: 'Services',
-        data: countbyService
+        data: countbyService,
+        events: {
+          click: this.handleServiceClick
+        }
       }],
     }
     return (
@@ -155,4 +191,4 @@ class DailyActivity extends Component {
   }
 }
 
-export default DailyActivity
+export default hoc(DailyActivity)
