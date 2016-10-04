@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
-class AgentView extends Component {
+class DailyActivity extends Component {
 
   state = {
     countByHost: Immutable.fromJS({}),
-    countByPort: Immutable.fromJS({}),
+    countbyService: Immutable.fromJS({}),
     agents: Immutable.fromJS({}),
   }
 
@@ -19,7 +19,7 @@ class AgentView extends Component {
     // const agents = _agents ? _agents : this.state.agents
     const currentDate = this.props.params.date
     let byHost = Immutable.fromJS({})
-    let byPort = Immutable.fromJS({})
+    let byService = Immutable.fromJS({})
     events.map(event => {
       const date = this.formatDate(new Date(event.get('datetime')))
       if (date == currentDate && agents.get(event.get('nodename'))) {
@@ -28,30 +28,30 @@ class AgentView extends Component {
         hd = hd ? hd : []
         hd.push(event)
         byHost = byHost.set(host, hd)
-        const port = event.get('remote_port')
-        let pd = byPort.get(port)
-        pd = pd ? pd : []
-        pd.push(event)
-        byPort = byPort.set(port, pd)
+        const service = event.get('service')
+        let sd = byService.get(service)
+        sd = sd ? sd : []
+        sd.push(event)
+        byService = byService.set(service, sd)
       }
     })
     const countByHost = [],
-          countByPort = []
+          countbyService = []
     byHost.map((bh, k) => {
       countByHost.push({
         name: k,
         y: bh.length
       })
     })
-    byPort.map((bp, k) => {
-      countByPort.push({
+    byService.map((bs, k) => {
+      countbyService.push({
         name: k,
-        y: bp.length
+        y: bs.length
       })
     })
     return {
       countByHost,
-      countByPort
+      countbyService
     }
   }
 
@@ -72,7 +72,7 @@ class AgentView extends Component {
   }
 
   render() {
-    const { countByHost, countByPort, agents } = this.state
+    const { countByHost, countbyService, agents } = this.state
     const configHosts = {
       chart: {
         type: 'pie',
@@ -94,12 +94,12 @@ class AgentView extends Component {
         data: countByHost
       }],
     }
-    const configPorts = {
+    const configServices = {
       chart: {
         type: 'pie',
       },
       title: {
-        text: 'Total Attacking Ports'
+        text: 'Attacked Services'
       },
       tooltip: {
         pointFormat: 'Attacks: <b>{point.y}</b>'
@@ -111,8 +111,8 @@ class AgentView extends Component {
         },
       },
       series: [{
-        name: 'Ports',
-        data: countByPort
+        name: 'Services',
+        data: countbyService
       }],
     }
     return (
@@ -123,7 +123,7 @@ class AgentView extends Component {
             <ReactHighcharts config={configHosts} />
           </div>
           <div className="col-md-6">
-            <ReactHighcharts config={configPorts} />
+            <ReactHighcharts config={configServices} />
           </div>
         </div>
         <div className="m-t-2">
@@ -155,4 +155,4 @@ class AgentView extends Component {
   }
 }
 
-export default AgentView
+export default DailyActivity
