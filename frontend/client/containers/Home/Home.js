@@ -1,14 +1,25 @@
 import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
-import LoadingIndicator from 'components/LoadingIndicator/LoadingIndicator'
 
+import LoadingIndicator from 'components/LoadingIndicator/LoadingIndicator'
+import { DateRange, DateRangePicker } from 'components/DateRangePicker/DateRangePicker'
 import hoc from './hoc'
 
 class Home extends Component {
 
-  state = {
-    events: Immutable.fromJS({})
+  constructor(props) {
+    super(props)
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - startDate.getDay() + 1)
+    startDate.setHours(0); startDate.setMinutes(0); startDate.setSeconds(0); startDate.setMilliseconds(0);
+    const endDate = new Date(startDate.getTime())
+    endDate.setDate(endDate.getDate() + 6)
+    this.state = {
+      range: new DateRange(startDate, endDate),
+      events: Immutable.fromJS({}),
+    }
   }
 
   formatDate(date) {
@@ -36,26 +47,25 @@ class Home extends Component {
     }
   }
 
-  handleClickDate = (e) => {
-    console.log(e.target)
-  }
-
-  componentWillMount() {
+  calculateGraphData = (range) => {
     const { events } = this.props
-    // calculate dateToIndexes
+    // calculate dateToIndexes and defaultArray
     let dateToIndexes = Immutable.fromJS({})
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - startDate.getDay() + 1)
-    startDate.setHours(0); startDate.setMinutes(0); startDate.setSeconds(0); startDate.setMilliseconds(0);
-    for(let i = 0; i < 7; i++) {
-      dateToIndexes = dateToIndexes.set(this.formatDate(startDate), i)
-      startDate.setDate(startDate.getDate() + 1)
+    const _date = range.start.toDate()
+    _date.setHours(0); _date.setMinutes(0); _date.setSeconds(0); _date.setMilliseconds(0);
+    const endDate = range.end.toDate()
+    endDate.setHours(0); endDate.setMinutes(0); endDate.setSeconds(0); endDate.setMilliseconds(0);
+    const defaultArray = []
+    let i = 0
+    while(_date <= endDate) {
+      dateToIndexes = dateToIndexes.set(this.formatDate(_date), i)
+      _date.setDate(_date.getDate() + 1)
+      defaultArray.push(0)
+      i++
     }
+
     // calculate stacked column data
     let sortedEvents = Immutable.fromJS({})
-    const defaultArray = [0, 0, 0, 0, 0, 0, 0]
-    const tmpdt = new Date();
-    tmpdt.setDate(tmpdt.getDate() - tmpdt.getDay() + 1)
     events.map(event => {
       const date = this.formatDate(new Date(event.get('datetime')))
       const i = dateToIndexes.get(date)
@@ -67,11 +77,17 @@ class Home extends Component {
       }
     })
     this.setState({
+      range,
       events: sortedEvents
     })
+  }
+
+  componentWillMount() {
     // get nodes data
     const { getNodes } = this.props
     getNodes()
+
+    this.calculateGraphData(this.state.range)
   }
 
   render() {
@@ -84,16 +100,20 @@ class Home extends Component {
       )
     }
 
-    const { events } = this.state
+    const { events, range } = this.state
+
     const weekDates = []
     const data = []
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1);
-    for(let i = 0; i < 7; i++) {
-      const date = this.formatDate(currentDate)
+    const _date = range.start.toDate()
+    _date.setHours(0); _date.setMinutes(0); _date.setSeconds(0); _date.setMilliseconds(0);
+    const endDate = range.end.toDate()
+    endDate.setHours(0); endDate.setMinutes(0); endDate.setSeconds(0); endDate.setMilliseconds(0);
+    while(_date <= endDate) {
+      const date = this.formatDate(_date)
       weekDates.push(date)
-      currentDate.setDate(currentDate.getDate() + 1);
+      _date.setDate(_date.getDate() + 1)
     }
+
     events.map((nodeData, key) => {
       data.push({
         name: key,
@@ -113,9 +133,6 @@ class Home extends Component {
       },
       xAxis: {
         categories: weekDates,
-        events: {
-          click: this.handleClickDate,
-        },
       },
       legend: {
         align: 'right',
@@ -155,6 +172,12 @@ class Home extends Component {
     return (
       <div>
         <h3 className="title">Home</h3>
+        <div className="m-t-2 m-b-2">
+          <DateRangePicker
+            customOnly
+            value={range}
+            onChange={range => this.calculateGraphData(range)} />
+        </div>
         <ReactHighcharts config={config} />
         <h5 className="m-t-2">Agents activity</h5>
         <div className="m-t-2">

@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import DatePicker from 'react-datepicker'
+import Moment from 'moment'
 
 class DateRange {
 
   period = 1;
-  start = null;
-  end = null;
+
+  constructor(_start = null, _end = null) {
+    this.start = _start ? new Moment(_start) : null;
+    this.end = _end ? new Moment(_end) : null;
+  }
 
   isIn = (date) => {
     if (this.period == 0) {
@@ -56,25 +60,32 @@ class DateRangePicker extends Component {
   }
 
   render() {
-    const { className, value } = this.props
+    const { className, value, customOnly } = this.props
     return (
       <div className={className}>
-        <label>Period:</label>
-        <select
-          className="form-control"
-          style={{ width: 300 }}
-          value={value.period}
-          onChange={this.handlePeriodChange}
-          >
-          <option value={1}>Last one hour</option>
-          <option value={24}>Last one day</option>
-          <option value={168}>Last one week</option>
-          <option value={168 * 30}>Last 30 days</option>
-          <option value={168 * 180}>Last 6 months</option>
-          <option value={0}>Custom...</option>
-        </select>
         {
-          value.period == 0 ?
+          customOnly ?
+          undefined
+          :
+          <div>
+            <label>Period:</label>
+            <select
+              className="form-control"
+              style={{ width: 300 }}
+              value={value.period}
+              onChange={this.handlePeriodChange}
+              >
+              <option value={1}>Last one hour</option>
+              <option value={24}>Last one day</option>
+              <option value={168}>Last one week</option>
+              <option value={168 * 30}>Last 30 days</option>
+              <option value={168 * 180}>Last 6 months</option>
+              <option value={0}>Custom...</option>
+            </select>
+          </div>
+        }
+        {
+          value.period == 0 || customOnly ?
           (
             <div className="m-t-2">
               <div style={{ display: 'inline-block' }}>
