@@ -80,6 +80,7 @@ class Home extends Component {
         sortedEvents = sortedEvents.set(nm, data)
       }
     })
+
     this.setState({
       range,
       events: sortedEvents
