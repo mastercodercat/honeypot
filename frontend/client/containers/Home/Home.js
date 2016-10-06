@@ -4,6 +4,7 @@ import Immutable from 'immutable'
 
 import LoadingIndicator from 'components/LoadingIndicator/LoadingIndicator'
 import { DateRange, DateRangePicker } from 'components/DateRangePicker/DateRangePicker'
+import { format2Digits } from 'utils/formatter'
 import hoc from './hoc'
 
 class Home extends Component {
@@ -23,7 +24,7 @@ class Home extends Component {
   }
 
   formatDate(date) {
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+    return date.getFullYear() + '-' + format2Digits(date.getMonth() + 1) + '-' + format2Digits(date.getDate())
   }
 
   getIndex(elm) {
@@ -48,6 +49,9 @@ class Home extends Component {
   }
 
   calculateGraphData = (range) => {
+    // get nodes from api
+    this.getNodesInRange(range)
+
     const { events } = this.props
     // calculate dateToIndexes and defaultArray
     let dateToIndexes = Immutable.fromJS({})
@@ -82,11 +86,16 @@ class Home extends Component {
     })
   }
 
-  componentWillMount() {
-    // get nodes data
+  getNodesInRange = (range) => {
     const { getNodes } = this.props
-    getNodes()
+    getNodes(
+      this.formatDate(range.start.toDate()),
+      this.formatDate(range.end.toDate())
+    )
+  }
 
+  componentWillMount() {
+    this.getNodesInRange(this.state.range)
     this.calculateGraphData(this.state.range)
   }
 
@@ -187,6 +196,7 @@ class Home extends Component {
                 <th>Agent</th>
                 <th>Status</th>
                 <th>Last 24h events</th>
+                <th>Events in the selected range</th>
                 <th>Total events</th>
               </tr>
             </thead>
@@ -197,6 +207,7 @@ class Home extends Component {
                     <td>{node.get('nodename')}</td>
                     <td className='text-success'>Online</td>
                     <td>{node.get('events_count_today')}</td>
+                    <td>{node.get('events_count_period')}</td>
                     <td>{node.get('events_count')}</td>
                   </tr>
                 ))

@@ -72,10 +72,23 @@ export default function nodes(state = initialState, action) {
   }
 }
 
-export function getNodes() {
+export function getNodes(startDate, endDate) {
+  let url = '/api/nodes/', param = ''
+  if (startDate) {
+    param += `start=${startDate}`
+  }
+  if (endDate) {
+    if (param) {
+      param += '&'
+    }
+    param += `end=${endDate}`
+  }
+  if (param) {
+    url += ('?' + param)
+  }
   return {
     types: [NODES_GET, NODES_GET_SUCCESS, NODES_GET_FAIL],
-    promise: (client) => client.get('/api/nodes/')
+    promise: (client) => client.get(url)
   }
 }
 

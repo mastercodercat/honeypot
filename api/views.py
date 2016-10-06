@@ -129,12 +129,25 @@ class NodesList(APIView):
       tomorrow = today + timedelta(1)
       today_start = datetime.combine(today, time())
       today_end = datetime.combine(tomorrow, time())
+
+      period_events = node.event_set
+      start = request.query_params.get('start', None)
+      if start is not None:
+        period_start_date = datetime.strptime(start, "%Y-%m-%d")
+        period_events = period_events.filter(datetime__gte=period_start_date)
+
+      end = request.query_params.get('end', None)
+      if end is not None:
+        period_end_date = datetime.strptime(end, "%Y-%m-%d")
+        period_events = period_events.filter(datetime__lte=period_end_date)
+
       nobj = {
         'id': node.id,
         'nodename': node.nodename,
         'owner': node.owner.id if node.owner is not None else 0,
         'events_count': node.event_set.count(),
-        'events_count_today': node.event_set.filter(datetime__lte=today_end, datetime__gte=today_start).count()
+        'events_count_today': node.event_set.filter(datetime__lte=today_end, datetime__gte=today_start).count(),
+        'events_count_period': period_events.count()
       }
       # api key
       if request.user.is_staff:
