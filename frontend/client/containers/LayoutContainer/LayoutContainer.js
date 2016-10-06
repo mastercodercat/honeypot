@@ -21,6 +21,9 @@ export class LayoutContainer extends Component {
     return (
       <div>
         <Sidebar />
+        <div className="topbar">
+          <img src="/assets/images/logo.png" />
+        </div>
         {
           loaded ?
           <div className="content">

@@ -1,3 +1,14 @@
+.topbar {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  top: 0;
+  background: #fff;
+  padding: 15px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+}
+
 .content {
   margin-left: $sidebar-width;
   padding: $padding-top 25px;
