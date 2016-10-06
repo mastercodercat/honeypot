@@ -12,6 +12,7 @@
         <script type="text/javascript">
           {% if user and not user.is_anonymous %}
             window.honeydbLoggedIn = true;
+            window.logoutLink = "{% url 'auth:logout' %}?next=/login";
             {% if user.is_staff %}
               window.honeydbAdmin = true;
             {% endif %}

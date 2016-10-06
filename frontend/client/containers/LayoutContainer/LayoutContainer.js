@@ -23,6 +23,7 @@ export class LayoutContainer extends Component {
         <Sidebar />
         <div className="topbar">
           <img src="/assets/images/logo.png" />
+          <a className="logout-link" href={window.logoutLink}>Logout</a>
         </div>
         {
           loaded ?
