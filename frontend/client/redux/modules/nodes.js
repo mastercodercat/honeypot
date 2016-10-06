@@ -18,6 +18,10 @@ import {
   NODES_UPDATE_SUCCESS,
   NODES_UPDATE_FAIL,
 
+  NODES_REMOVE_OWNER,
+  NODES_REMOVE_OWNER_SUCCESS,
+  NODES_REMOVE_OWNER_FAIL,
+
   NODES_DELETE,
   NODES_DELETE_SUCCESS,
   NODES_DELETE_FAIL,
@@ -67,6 +71,27 @@ export default function nodes(state = initialState, action) {
         const id = action.data.id
         return state.deleteIn(['nodes', id])
       }
+    case NODES_UPDATE_SUCCESS:
+      {
+        const { id, owner_id } = action.data
+        const owners = state.getIn(['nodes', id, 'owners'], Immutable.fromJS([])).toJS()
+        if (owners.indexOf(owner_id) == -1) {
+          owners.push(owner_id)
+          return state.setIn(['nodes', id, 'owners'], Immutable.fromJS(owners))
+        }
+        return state
+      }
+    case NODES_REMOVE_OWNER_SUCCESS:
+      {
+        const { id, owner_id } = action.data
+        const owners = state.getIn(['nodes', id, 'owners'], Immutable.fromJS([])).toJS()
+        const index = owners.indexOf(owner_id)
+        if (index >= 0) {
+          owners.splice(index, 1)
+          return state.setIn(['nodes', id, 'owners'], Immutable.fromJS(owners))
+        }
+        return state
+      }
     default:
       return state
   }
@@ -100,9 +125,26 @@ export function createNode(nodename, owner) {
 }
 
 export function updateNodeOwner(id, owner) {
+  const owner_id = parseInt(owner)
   return {
     types: [NODES_UPDATE, NODES_UPDATE_SUCCESS, NODES_UPDATE_FAIL],
-    promise: (client) => client.put('/api/nodes/', { data: { id, owner } })
+    promise: (client) => client.put('/api/nodes/', { data: { id, owner_id, remove: 0 } }),
+    data: {
+      id,
+      owner_id,
+    },
+  }
+}
+
+export function removeNodeOwner(id, owner) {
+  const owner_id = parseInt(owner)
+  return {
+    types: [NODES_REMOVE_OWNER, NODES_REMOVE_OWNER_SUCCESS, NODES_REMOVE_OWNER_FAIL],
+    promise: (client) => client.put('/api/nodes/', { data: { id, owner_id, remove: 1 } }),
+    data: {
+      id,
+      owner_id,
+    },
   }
 }
 

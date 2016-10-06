@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import { getUsers } from 'redux/modules/users'
-import { getNodes, updateNodeOwner, regenerateNodeAPIKey, createNode, deleteNode, clearNodeEvents } from 'redux/modules/nodes'
+import { getNodes, updateNodeOwner, removeNodeOwner, regenerateNodeAPIKey, createNode, deleteNode, clearNodeEvents } from 'redux/modules/nodes'
 
 const mapStateToProps = ({ nodes, users }) => ({
   users: users.get('users'),
@@ -16,6 +16,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getUsers,
   getNodes,
   updateNodeOwner,
+  removeNodeOwner,
   regenerateNodeAPIKey,
   createNode,
   deleteNode,

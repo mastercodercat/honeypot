@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from api.serializers import EventSerializer, NodeSerializer, UserSerializer, UserConfigSerializer
-from api.models import Event, Node, UserConfig
+from api.models import Event, Node, UserConfig, NodeOwner
 from honeypot_visualizer.settings import SECRET_KEY, EMAIL_HOST
 import jwt, random
 from datetime import datetime, timedelta, time
@@ -69,8 +69,8 @@ class EventLogger(APIView):
     serializer = EventSerializer(data=data)
     if serializer.is_valid():
       serializer.save()
-      if node.owner is not None:
-        config = UserConfig.objects.filter(user=node.owner).first()
+      for node_owner in node.nodeowner_set.all():
+        config = UserConfig.objects.filter(user=node_owner.user).first()
         if (config is not None) and (EMAIL_HOST != '') and (config.email != ''):
           send_mail(
             'Honeypot Event',
@@ -141,10 +141,14 @@ class NodesList(APIView):
         period_end_date = datetime.strptime(end, "%Y-%m-%d")
         period_events = period_events.filter(datetime__lte=period_end_date)
 
+      owners = []
+      for node_owner in node.nodeowner_set.all():
+        owners.append(node_owner.user.id)
+
       nobj = {
         'id': node.id,
         'nodename': node.nodename,
-        'owner': node.owner.id if node.owner is not None else 0,
+        'owners': owners,
         'events_count': node.event_set.count(),
         'events_count_today': node.event_set.filter(datetime__lte=today_end, datetime__gte=today_start).count(),
         'events_count_period': period_events.count()
@@ -165,8 +169,10 @@ class NodesList(APIView):
     owner_id = request.data.get('owner')
     owner = User.objects.get(pk=owner_id)
     api_key = jwt.encode({ 'nodename': nodename, 'rand': int(random.random() * 10000) }, SECRET_KEY, algorithm='HS256')
-    node = Node(nodename=nodename, owner=owner, api_key=api_key)
+    node = Node(nodename=nodename, api_key=api_key)
     node.save()
+    nodeOwner = Node(user=owner, node=node)
+    nodeOwner.save()
     serializer = NodeSerializer(node)
     return Response(serializer.data)
 
@@ -176,12 +182,17 @@ class NodesList(APIView):
       'result': False
     }
     id = request.data.get('id')
-    owner_id = request.data.get('owner')
+    owner_id = request.data.get('owner_id')
+    remove_flag = request.data.get('remove')
     node = Node.objects.get(pk=id)
     user = User.objects.get(pk=owner_id)
     if (node is not None) and (user is not None):
-      node.owner = user
-      node.save()
+      node_owner = node.nodeowner_set.filter(user=user).first()
+      if remove_flag != 1 and node_owner is None:
+        new_node_owner = NodeOwner(user=user, node=node)
+        new_node_owner.save()
+      elif remove_flag == 1 and node_owner is not None:
+        node_owner.delete()
       response['result'] = True
     return Response(response)
 
@@ -195,6 +206,8 @@ class NodesList(APIView):
     if node is None:
       response['reason'] = 'Agent node not found'
       return Response(response)
+    node.nodeowner_set.all().delete()
+    node.event_set.all().delete()
     node.delete()
     response['result'] = True
     return Response(response)

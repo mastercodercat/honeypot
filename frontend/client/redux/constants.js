@@ -40,6 +40,10 @@ export const NODES_UPDATE = 'honeydb/NODES/UPDATE'
 export const NODES_UPDATE_SUCCESS = 'honeydb/NODES/UPDATE_SUCCESS'
 export const NODES_UPDATE_FAIL = 'honeydb/NODES/UPDATE_FAIL'
 
+export const NODES_REMOVE_OWNER = 'honeydb/NODES/REMOVE_OWNER'
+export const NODES_REMOVE_OWNER_SUCCESS = 'honeydb/NODES/REMOVE_OWNER_SUCCESS'
+export const NODES_REMOVE_OWNER_FAIL = 'honeydb/NODES/REMOVE_OWNER_FAIL'
+
 export const NODES_DELETE = 'honeydb/NODES/DELETE'
 export const NODES_DELETE_SUCCESS = 'honeydb/NODES/DELETE_SUCCESS'
 export const NODES_DELETE_FAIL = 'honeydb/NODES/DELETE_FAIL'

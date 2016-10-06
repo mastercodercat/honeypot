@@ -9,6 +9,10 @@ class Nodes extends Component {
     this.props.updateNodeOwner(nodeId, ownerId)
   }
 
+  removeNode = (nodeId, ownerId) => {
+    this.props.removeNodeOwner(nodeId, ownerId)
+  }
+
   updateAllNodes = () => {
     const {
       nodes, loadedNodes,
@@ -46,11 +50,6 @@ class Nodes extends Component {
     const {
       nodes, loadedNodes,
     } = this.props
-    if (loadedNodes) {
-      for(let i = 0; i < nodes.size; i++) {
-        this.refs['saveButton' + i].disabled = true
-      }
-    }
   }
 
   render() {
@@ -89,25 +88,44 @@ class Nodes extends Component {
                 <div className="node m-b-2 p-b-2" key={index}>
                   <h5>{node.get('nodename')}</h5>
                   <div className="m-t-1">
-                    <select className="form-control user-select" defaultValue={node.get('owner')} ref={"node" + index}
-                      onChange={e => {
-                        this.refs['saveButton' + index].disabled = false
-                      }}>
-                      <option value={0}>- Not assigned -</option>
-                      {
-                        users.valueSeq().map((user, uindex) => (
-                          <option key={uindex} value={user.get('id')}>{user.get('username')}</option>
-                        ))
-                      }
-                    </select>
-                    <button className="btn btn-primary" ref={"saveButton" + index}
-                      onClick={e => {
-                        this.updateNode(node.get('id'), this.refs['node' + index].value)
-                        this.refs['saveButton' + index].disabled = true
-                      }}>
-                      Reassign to user
-                    </button>
-                    <span className="node-delete-buttons">
+                    {
+                      node.get('owners').map(ownerId => {
+                        const user = users.get(ownerId)
+                        return (
+                          <span key={ownerId} className="user-tag">
+                            {user.get('username')}
+                            <a
+                              className="remove-owner"
+                              href="javascript:;"
+                              onClick={e => {
+                                this.removeNode(node.get('id'), ownerId)
+                              }} >
+                              <i className="fa fa-close" />
+                            </a>
+                          </span>
+                        )
+                      })
+                    }
+                    <div className="owner-add">
+                      <select
+                        className="form-control user-select"
+                        ref={"node" + index}
+                        defaultValue={node.get('owner')}>
+                        <option value={0}>- Not assigned -</option>
+                        {
+                          users.valueSeq().map((user, uindex) => (
+                            <option key={uindex} value={user.get('id')}>{user.get('username')}</option>
+                          ))
+                        }
+                      </select>
+                      <button className="btn btn-primary"
+                        onClick={e => {
+                          this.updateNode(node.get('id'), this.refs['node' + index].value)
+                        }}>
+                        Add
+                      </button>
+                    </div>
+                    <div className="node-delete-buttons">
                       <button
                         className="btn btn-danger"
                         ref={"clearEventsButton" + index}
@@ -144,7 +162,7 @@ class Nodes extends Component {
                         >
                         Remove Agent
                       </button>
-                    </span>
+                    </div>
                   </div>
                   <div className="m-t-1">
                     API Key: <span className="api-key">{node.get('api_key')}</span>

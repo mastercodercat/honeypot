@@ -5,8 +5,11 @@ from django.contrib.auth.models import User
 
 class Node(models.Model):
   nodename = models.CharField(max_length=50)
-  owner = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
   api_key = models.CharField(max_length=150, blank=True)
+
+class NodeOwner(models.Model):
+  node = models.ForeignKey(Node, models.SET_NULL, blank=True, null=True)
+  user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
 
 class Event(models.Model):
   nodename = models.CharField(max_length=50)
