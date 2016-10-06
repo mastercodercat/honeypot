@@ -4,6 +4,7 @@ import Immutable from 'immutable'
 
 import LoadingIndicator from 'components/LoadingIndicator/LoadingIndicator'
 import { DateRange, DateRangePicker } from 'components/DateRangePicker/DateRangePicker'
+import VisualGraph from 'components/VisualGraph/VisualGraph'
 import { format2Digits } from 'utils/formatter'
 import hoc from './hoc'
 
@@ -182,6 +183,7 @@ class Home extends Component {
     return (
       <div>
         <h3 className="title">Home</h3>
+        <VisualGraph nodes={nodes.valueSeq()} />
         <div className="m-t-2 m-b-2">
           <DateRangePicker
             customOnly
