@@ -20,4 +20,4 @@ class UserSerializer(serializers.ModelSerializer):
 class UserConfigSerializer(serializers.ModelSerializer):
   class Meta:
     model = UserConfig
-    fields = ('user', 'threshold')
+    fields = ('user', 'threshold', 'email')
