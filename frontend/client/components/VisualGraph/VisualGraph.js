@@ -1,27 +1,43 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router'
+
+import { format2Digits } from 'utils/formatter'
 
 class VisualGraph extends Component {
 
+  formatDate(date) {
+    return date.getFullYear() + '-' + format2Digits(date.getMonth() + 1) + '-' + format2Digits(date.getDate())
+  }
+
   outputNode(className, imageUrl, node = null, style = {}, index = -1) {
+    let url = ''
+    const date = new Date()
+    if (node) {
+      url = `/daily/${this.formatDate(date)}/agent/${node.get('nodename')}`
+    } else {
+      url = `/events`
+    }
     return (
       <div className={className} style={style} >
-        <img src={imageUrl} />
-        <div className="title">
-          {node ? node.get('nodename') : "Server"}
-        </div>
-        {
-          node ?
-          <div className="node-tooltip">
-            <div className="theader">Information</div>
-            <div className="tcontent">
-              Name: {node.get('nodename')}<br />
-              Last 24h events: {node.get('events_count_today')}<br />
-              Total events: {node.get('events_count')}
-            </div>
+        <Link to={url}>
+          <img src={imageUrl} />
+          <div className="title">
+            {node ? node.get('nodename') : "Server"}
           </div>
-          :
-          ''
-        }
+          {
+            node ?
+            <div className="node-tooltip">
+              <div className="theader">Information</div>
+              <div className="tcontent">
+                Name: {node.get('nodename')}<br />
+                Last 24h events: {node.get('events_count_today')}<br />
+                Total events: {node.get('events_count')}
+              </div>
+            </div>
+            :
+            ''
+          }
+        </Link>
       </div>
     )
   }

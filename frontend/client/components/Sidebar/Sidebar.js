@@ -10,18 +10,15 @@ const Sidebar = () => {
       <Link className="navlink" to="/">
         <i className="fa fa-fw fa-home" />
       </Link>
+      <Link className="navlink" to="/events">
+        <i className="fa fa-fw fa-bar-chart" />
+      </Link>
       <Link className="navlink" to="/hosts">
         <i className="fa fa-fw fa-share-alt" />
       </Link>
       <Link className="navlink" to="/services">
         <i className="fa fa-fw fa-gears" />
       </Link>
-      {/*<Link className="navlink" to="/">
-        <i className="fa fa-fw fa-info-circle" />
-      </Link>
-      <Link className="navlink" to="/">
-        <i className="fa fa-fw fa-database" />
-      </Link>*/}
       <Link className="navlink" to="/userconfig">
         <i className="fa fa-fw fa-user" />
       </Link>

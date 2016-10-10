@@ -4,6 +4,7 @@ import { Route, IndexRedirect } from 'react-router'
 import LayoutContainer from './containers/LayoutContainer/LayoutContainer'
 import Login from './containers/Login/Login'
 import Home from './containers/Home/Home'
+import EventsView from './containers/EventsView/EventsView'
 import Hosts from './containers/Hosts/Hosts'
 import Host from './containers/Host/Host'
 import Services from './containers/Services/Services'
@@ -32,6 +33,7 @@ const routes = () => {
 
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="home" component={Home} />
+        <Route path="events" component={EventsView} />
         <Route path="daily/:date" component={DailyActivity} />
         <Route path="daily/:date/agent/:agent" component={DailyActivity} />
         <Route path="hosts" component={Hosts} />

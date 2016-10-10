@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
+import { format2Digits } from 'utils/formatter'
+
 import hoc from './hoc'
 
 class DailyActivity extends Component {
@@ -13,7 +15,7 @@ class DailyActivity extends Component {
   }
 
   formatDate(date) {
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+    return date.getFullYear() + '-' + format2Digits(date.getMonth() + 1) + '-' + format2Digits(date.getDate())
   }
 
   updatedState = (agents) => {
@@ -134,6 +136,8 @@ class DailyActivity extends Component {
 
   render() {
     const { countByHost, countbyService, agents } = this.state
+    console.log(countByHost)
+    console.log(countbyService)
     const currentAgent = this.props.params.agent
     const configHosts = {
       chart: {
