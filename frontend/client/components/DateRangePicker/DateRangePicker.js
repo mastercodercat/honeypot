@@ -4,7 +4,7 @@ import Moment from 'moment'
 
 class DateRange {
 
-  period = 1;
+  period = -1;
 
   constructor(_start = null, _end = null) {
     this.start = _start ? new Moment(_start) : null;
@@ -12,7 +12,9 @@ class DateRange {
   }
 
   isIn = (date) => {
-    if (this.period == 0) {
+    if (this.period < 0) {
+      return true
+    } else if (this.period == 0) {
       if (this.start && this.start.toDate() > date) {
         return false
       }
@@ -75,6 +77,7 @@ class DateRangePicker extends Component {
               value={value.period}
               onChange={this.handlePeriodChange}
               >
+              <option value={-1}>All</option>
               <option value={1}>Last one hour</option>
               <option value={24}>Last one day</option>
               <option value={168}>Last one week</option>

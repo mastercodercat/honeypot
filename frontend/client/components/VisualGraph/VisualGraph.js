@@ -5,38 +5,59 @@ import { format2Digits } from 'utils/formatter'
 
 class VisualGraph extends Component {
 
-  formatDate(date) {
-    return date.getFullYear() + '-' + format2Digits(date.getMonth() + 1) + '-' + format2Digits(date.getDate())
-  }
-
-  outputNode(className, imageUrl, node = null, style = {}, index = -1) {
-    let url = ''
-    const date = new Date()
-    if (node) {
-      url = `/daily/${this.formatDate(date)}/agent/${node.get('nodename')}`
-    } else {
-      url = `/events`
-    }
+  outputServerNode(className, imageUrl, data, style = {}, index = -1) {
+    const url = `/events`
     return (
       <div className={className} style={style} >
         <Link to={url}>
-          <img src={imageUrl} />
-          <div className="title">
-            {node ? node.get('nodename') : "Server"}
-          </div>
-          {
-            node ?
-            <div className="node-tooltip">
-              <div className="theader">Information</div>
-              <div className="tcontent">
-                Name: {node.get('nodename')}<br />
-                Last 24h events: {node.get('events_count_today')}<br />
-                Total events: {node.get('events_count')}
-              </div>
+          <div className="node-content">
+            <img src={imageUrl} />
+            <div className="title">
+              Server
             </div>
-            :
-            ''
-          }
+          </div>
+          <div className="node-tooltip">
+            <div className="theader">Information</div>
+            <div className="tcontent">
+              Last 24h events: <span className="event-count">{data.last24hEventsAll}</span><br />
+              Total events: {data.totalEvents}
+            </div>
+          </div>
+        </Link>
+      </div>
+    )
+  }
+
+  outputNode(className, imageUrl, node, style = {}, index = -1) {
+    const url = `/daily/all/agent/${node.get('nodename')}`
+    let status = 'safe'
+    if (node.get('events_count_today') > 5) {
+      status = 'danger'
+    } else if (node.get('events_count_today') > 0) {
+      status = 'neutral'
+    }
+    return (
+      <div className={className + ' ' + status} style={style} >
+        <Link to={url}>
+          <div className="node-content">
+            <img src={imageUrl} />
+            <div className="title">
+              {node ? node.get('nodename') : "Server"}
+            </div>
+          </div>
+          <div className="node-tooltip">
+            <div className="theader">Information</div>
+            <div className="tcontent">
+              Name: {node.get('nodename')}<br />
+              Last 24h events: <span className="event-count">{node.get('events_count_today')}</span><br />
+              Total events: {node.get('events_count')}
+            </div>
+          </div>
+          <div className="node-status">
+            <span className="light"></span>
+            <span className="light"></span>
+            <span className="light"></span>
+          </div>
         </Link>
       </div>
     )
@@ -45,6 +66,8 @@ class VisualGraph extends Component {
   render() {
     const { nodes } = this.props
     const nodesCount = nodes.size
+    let last24hEventsAll = 0
+    let totalEvents = 0
     if (!nodesCount) {
       return (
         <div></div>
@@ -55,11 +78,12 @@ class VisualGraph extends Component {
     return (
       <div className="visual-graph-container">
         <div className="inner">
-          {this.outputNode("node server", "/assets/images/server.png")}
           {
             nodes.map((node, index) => {
               const x = -radius * Math.cos(angleDelta * index)
               const y = -radius * Math.sin(angleDelta * index) / 1.6
+              last24hEventsAll += node.get('events_count_today')
+              totalEvents += node.get('events_count')
               return (
                 <div key={index}>
                   {this.outputNode("node", "/assets/images/agent.png", node, {
@@ -70,6 +94,9 @@ class VisualGraph extends Component {
               )
             })
           }
+          <div>
+            {this.outputServerNode("node server", "/assets/images/server.png", { last24hEventsAll, totalEvents })}
+          </div>
         </div>
       </div>
     )

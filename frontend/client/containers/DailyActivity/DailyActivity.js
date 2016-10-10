@@ -1,17 +1,38 @@
 import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
+import { DateRange, DateRangePicker } from 'components/DateRangePicker/DateRangePicker'
 
 import { format2Digits } from 'utils/formatter'
 
 import hoc from './hoc'
 
+/*
+ * Component for Attacks View and Daily View
+ */
+
 class DailyActivity extends Component {
 
-  state = {
-    countByHost: Immutable.fromJS({}),
-    countbyService: Immutable.fromJS({}),
-    agents: Immutable.fromJS({}),
+  constructor(props) {
+    super(props)
+
+    let range = new DateRange()
+    const currentDate = this.props.params.date
+    if (currentDate != 'all') {
+      const _date = new Date(currentDate)
+      const _dateStart = new Date(currentDate)
+      _dateStart.setHours(0)
+      _dateStart.setMinutes(0)
+      _dateStart.setSeconds(0)
+      _dateStart.setMilliseconds(0)
+      range = new DateRange(_dateStart, _date)
+    }
+    this.state = {
+      countByHost: Immutable.fromJS({}),
+      countbyService: Immutable.fromJS({}),
+      agents: Immutable.fromJS({}),
+      range,
+    }
   }
 
   formatDate(date) {
@@ -21,12 +42,12 @@ class DailyActivity extends Component {
   updatedState = (agents) => {
     const { events } = this.props
     // const agents = _agents ? _agents : this.state.agents
-    const currentDate = this.props.params.date
+    const { range } = this.state
     let byHost = Immutable.fromJS({})
     let byService = Immutable.fromJS({})
     events.map(event => {
-      const date = this.formatDate(new Date(event.get('datetime')))
-      if (date == currentDate && agents.get(event.get('nodename'))) {
+      const date = new Date(this.formatDate(new Date(event.get('datetime'))))
+      if (range.isIn(date) && agents.get(event.get('nodename'))) {
         const host = event.get('remote_host')
         let hd = byHost.get(host)
         hd = hd ? hd : []
@@ -113,14 +134,24 @@ class DailyActivity extends Component {
     }, 10)
   }
 
+  handleRangeChange = (range) => {
+    const { agents } = this.state
+    this.setState({
+      range
+    })
+    setTimeout(() => {
+      this.setState(this.updatedState(agents))
+    }, 10)
+  }
+
   componentWillMount() {
     const { events } = this.props
-    const currentDate = this.props.params.date
     const currentAgent = this.props.params.agent
+    const { range } = this.state
     let agents = Immutable.fromJS({})
     events.map(event => {
-      const date = this.formatDate(new Date(event.get('datetime')))
-      if (date == currentDate) {
+      const date = new Date(this.formatDate(new Date(event.get('datetime'))))
+      if (range.isIn(date)) {
         if (!currentAgent || currentAgent == event.get('nodename')) {
           agents = agents.set(event.get('nodename'), true)
         } else {
@@ -136,8 +167,6 @@ class DailyActivity extends Component {
 
   render() {
     const { countByHost, countbyService, agents } = this.state
-    console.log(countByHost)
-    console.log(countbyService)
     const currentAgent = this.props.params.agent
     const configHosts = {
       chart: {
@@ -190,8 +219,18 @@ class DailyActivity extends Component {
     return (
       <div>
         <h3 className="title">
-          {currentAgent ? 'Agent View' : 'Daily Activity'}
+          Attacks View
         </h3>
+        {
+          this.props.params.date == 'all' ?
+          <div className="m-b-3">
+            <DateRangePicker
+              value={this.state.range}
+              onChange={this.handleRangeChange} />
+          </div>
+          :
+          ''
+        }
         {
           currentAgent ?
           <h5 className="m-b-3">Agent: {currentAgent}</h5>

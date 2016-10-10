@@ -159,6 +159,7 @@ $border-color: #e0e0e1;
     top: 50%;
     transform: translate3d(-50%, -40%, 0);
     background: #fff;
+    z-index: 1;
     img {
       display: block;
       max-width: 100%;
@@ -173,6 +174,10 @@ $border-color: #e0e0e1;
       }
     }
   }
+  .node-content {
+    position: relative;
+    z-index: 100;
+  }
   .node-tooltip {
     border: 1px solid #3C719F;
     position: absolute;
@@ -180,6 +185,8 @@ $border-color: #e0e0e1;
     top: 95%;
     min-width: 200px;
     display: none;
+    background: #fff;
+    z-index: 101;
     .theader {
       text-align: center;
       padding: 5px;
@@ -188,6 +195,48 @@ $border-color: #e0e0e1;
     }
     .tcontent {
       padding: 10px 15px;
+    }
+  }
+  .node-status {
+    position: absolute;
+    right: 0;
+    top: -17px;
+    background: #000;
+    border-radius: 3px;
+    padding: 4px 3px;
+    .light {
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #a0a0a0;
+      &:not(:last-child) {
+        margin-bottom: 3px;
+      }
+    }
+  }
+  .safe {
+    .light:nth-child(3) {
+      background-color: #00ff00;
+    }
+    .event-count {
+      color: #00ff00;
+    }
+  }
+  .neutral {
+    .light:nth-child(2) {
+      background-color: #ffff00;
+    }
+    .event-count {
+      color: #ffff00;
+    }
+  }
+  .danger {
+    .light:nth-child(1) {
+      background-color: #ff0000;
+    }
+    .event-count {
+      color: #ff0000;
     }
   }
 }
