@@ -71,7 +71,14 @@ class EventLogger(APIView):
       serializer.save()
       for node_owner in node.nodeowner_set.all():
         config = UserConfig.objects.filter(user=node_owner.user).first()
-        if (config is not None) and (EMAIL_HOST != '') and (config.email != ''):
+        # threshold check
+        allow_email = True
+        if config is not None and config.threshold > 0:
+          last_min = datetime.today() - timedelta(minutes=1)
+          event_count = Event.objects.filter(datetime__gte=last_min).count()
+          if event_count > config.threshold:
+            allow_email = False
+        if allow_email and (config is not None) and (EMAIL_HOST != '') and (config.email != ''):
           send_mail(
             'Honeypot Event',
             'The event ' + data['event'] + ' occurred on honeypot ' + data['nodename'],
@@ -81,7 +88,8 @@ class EventLogger(APIView):
           )
 
       return Response({
-        'result': True
+        'result': True,
+        'email': allow_email
       })
 
     return Response(serializer.errors)
