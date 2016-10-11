@@ -38,7 +38,7 @@ class SessionViewer extends Component {
           // Sort by service
           let _eventsByService = _events.get(service, Immutable.fromJS({}))
           // Sort by session
-          const session = event.get('session').substr(0, 10)
+          const session = event.get('session').substr(0, 8)
           let _eventsBySession = _eventsByService.get(session, [])
           _eventsBySession.push(event)
           // Mix up
