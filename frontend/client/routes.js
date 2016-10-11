@@ -25,6 +25,10 @@ const requireAdmin = (nextState, replace) => {
   }
 }
 
+/*
+/hosts, and /services routes may not be needed 
+*/
+
 const routes = () => {
   return (
     <Route path="/">

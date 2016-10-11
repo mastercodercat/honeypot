@@ -13,12 +13,12 @@ const Sidebar = () => {
       <Link className="navlink" to="/events">
         <i className="fa fa-fw fa-bar-chart" />
       </Link>
-      <Link className="navlink" to="/hosts">
+      <Link className="navlink" to="/daily/all">
         <i className="fa fa-fw fa-share-alt" />
       </Link>
-      <Link className="navlink" to="/services">
+      {/*<Link className="navlink" to="/services">
         <i className="fa fa-fw fa-gears" />
-      </Link>
+      </Link>*/}
       <Link className="navlink" to="/userconfig">
         <i className="fa fa-fw fa-user" />
       </Link>

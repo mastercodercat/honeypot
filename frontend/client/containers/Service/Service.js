@@ -3,6 +3,7 @@ import ReactHighcharts from 'react-highcharts'
 import Immutable from 'immutable'
 
 import { DateRange, DateRangePicker } from 'components/DateRangePicker/DateRangePicker'
+import SessionViewer from 'components/SessionViewer/SessionViewer'
 
 class Service extends Component {
 
@@ -14,7 +15,6 @@ class Service extends Component {
     const { events } = this.props
     const currentService = this.props.params.service
     const { range } = this.state
-    const currentHost = this.props.params.host
     let sortedEvents = Immutable.fromJS({})
     events.map(event => {
       const service = event.get('service')
@@ -74,6 +74,10 @@ class Service extends Component {
             onChange={range => this.setState({ range })} />
         </div>
         <ReactHighcharts config={config} />
+        <SessionViewer
+          events={this.props.events}
+          range={range}
+          service={currentService} />
       </div>
     )
   }
