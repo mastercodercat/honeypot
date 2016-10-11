@@ -18,7 +18,7 @@ class Event(models.Model):
   datetime = models.DateTimeField()
   millisecond = models.IntegerField()
   session = models.CharField(max_length=50)
-  protocol = models.CharField(max_length=10)
+  protocol = models.CharField(max_length=30)
   event = models.CharField(max_length=30)
   local_host = models.CharField(max_length=30)
   local_port = models.IntegerField()
