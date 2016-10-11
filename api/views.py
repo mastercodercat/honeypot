@@ -166,13 +166,9 @@ class NodesList(APIView):
       'reason': ''
     }
     nodename = request.data.get('nodename')
-    owner_id = request.data.get('owner')
-    owner = User.objects.get(pk=owner_id)
     api_key = jwt.encode({ 'nodename': nodename, 'rand': int(random.random() * 10000) }, SECRET_KEY, algorithm='HS256')
     node = Node(nodename=nodename, api_key=api_key)
     node.save()
-    nodeOwner = Node(user=owner, node=node)
-    nodeOwner.save()
     serializer = NodeSerializer(node)
     return Response(serializer.data)
 

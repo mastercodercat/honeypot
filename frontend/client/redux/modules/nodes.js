@@ -117,10 +117,10 @@ export function getNodes(startDate, endDate) {
   }
 }
 
-export function createNode(nodename, owner) {
+export function createNode(nodename) {
   return {
     types: [NODES_CREATE, NODES_CREATE_SUCCESS, NODES_CREATE_FAIL],
-    promise: (client) => client.post('/api/nodes/', { data: { nodename, owner } })
+    promise: (client) => client.post('/api/nodes/', { data: { nodename } })
   }
 }
 

@@ -29,11 +29,11 @@ class Nodes extends Component {
 
   createNode = () => {
     const nodename = this.refs['newnode-name'].value
-    const owner = this.refs['newnode-owner'].value
     this.refs.newNodeButton.disabled = true
-    this.props.createNode(nodename, owner)
+    this.props.createNode(nodename)
     .then(r => {
       this.refs.newNodeButton.disabled = false
+      this.props.getNodes()
     })
     .catch(r => {
       this.refs.newNodeButton.disabled = false
@@ -44,12 +44,6 @@ class Nodes extends Component {
     const { getUsers, getNodes } = this.props
     getUsers()
     getNodes()
-  }
-
-  componentDidUpdate = () => {
-    const {
-      nodes, loadedNodes,
-    } = this.props
   }
 
   render() {
@@ -70,13 +64,6 @@ class Nodes extends Component {
         <h3 className="title">Agents</h3>
         <div className="new-node m-b-2">
           <input type="text" className="form-control elm" ref="newnode-name" />
-          <select className="form-control elm" ref="newnode-owner">
-            {
-              users.valueSeq().map((user, uindex) => (
-                <option key={uindex} value={user.get('id')}>{user.get('username')}</option>
-              ))
-            }
-          </select>
           <button className="btn btn-primary" ref="newNodeButton" onClick={this.createNode}>
             Create new agent
           </button>
@@ -89,6 +76,7 @@ class Nodes extends Component {
                   <h5>{node.get('nodename')}</h5>
                   <div className="m-t-1">
                     {
+                      node.get('owners') ?
                       node.get('owners').map(ownerId => {
                         const user = users.get(ownerId)
                         return (
@@ -105,12 +93,13 @@ class Nodes extends Component {
                           </span>
                         )
                       })
+                      :
+                      undefined
                     }
                     <div className="owner-add">
                       <select
                         className="form-control user-select"
-                        ref={"node" + index}
-                        defaultValue={node.get('owner')}>
+                        ref={"node" + index} >
                         <option value={0}>- Not assigned -</option>
                         {
                           users.valueSeq().map((user, uindex) => (

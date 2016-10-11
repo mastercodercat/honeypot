@@ -10,7 +10,7 @@ class EventSerializer(serializers.ModelSerializer):
 class NodeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Node
-    fields = ('id', 'nodename', 'owner', 'api_key')
+    fields = ('id', 'nodename', 'api_key')
 
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
